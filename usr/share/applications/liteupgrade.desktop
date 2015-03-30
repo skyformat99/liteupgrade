@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Categories=XFCE;GTK;Settings;DesktopSettings;X-XFCE-SettingsDialog;X-XFCE-SystemSettings;
+Encoding=UTF-8
+Exec=lite-upgrade-series2
+Icon=update-manager
+StartupNotify=true
+OnlyShowIn=XFCE;
+Terminal=false
+Type=Application
+Name=Lite Upgrade
+Comment=Upgrade Linux Lite from with a Series
+GenericName=Lite Upgrade
+X-XfceSettingsName=Lite Upgrade

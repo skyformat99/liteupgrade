@@ -1,0 +1,564 @@
+#!/bin/bash
+#----------------------------------------------------------------
+# Description: Linux Lite Upgrade Script - Home
+# About: For Linux Lite 2.- Series only
+# Authors: Misko_2083, Jerry Bezencon 2015
+# Website: https://www.linuxliteos.com
+#----------------------------------------------------------------
+
+# Ensure multi-language support
+export LANG=C
+
+# Linux Lite default dialog icon
+ic="/usr/share/icons/zenity-llcc.png"
+
+# Set functions for non-root execution
+# The ones that need root go to the other file: lite-upgrade-system-series2
+MKDIRBUPS() {
+    echo "#Creating back up directories..."
+    sleep 2
+        mkdir -p /home/$USER/.llupgradebackup/2.4 
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nCreating back up directories!\nUpgrade canceled."
+                    exit 1
+                        fi
+     mkdir -p /etc/skel/.llupgradebackup/2.4
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nCreating back up directories!\nUpgrade canceled."
+                    exit 1
+                        fi
+}
+
+# Copy all original files from /home/user and /etc/skel to their respective backup folders and versions
+
+# Backup /home/$USER/ first
+BUPHOMEUSER() {
+    echo "#Backing up select home files..."
+        cp /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.config/xfce4/panel/whiskermenu-1.rc /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/exo-terminal-emulator.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/alacarte-made-2.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/alacarte-made-4.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/alacarte-made-5.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/alacarte-made-6.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/alacarte-made-7.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/alacarte-made-10.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/alacarte-made-11.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.config/Thunar/uca.xml /home/$USER/.llupgradebackup/2.4
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nBacking up select home files!"
+                        fi
+}
+
+BUPHOMEUSER64() {
+    echo "#Backing up select home files..."
+        cp /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.config/xfce4/panel/whiskermenu-1.rc /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/exo-terminal-emulator.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.local/share/applications/alacarte-made-2.desktop /home/$USER/.llupgradebackup/2.4
+        cp /home/$USER/.config/Thunar/uca.xml /home/$USER/.llupgradebackup/2.4
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nBacking up select home files!"
+            fi
+}
+
+# Set lite-welcome to autostart on first boot
+# Executes at the end because the package lite-welcome needs to be installed first
+LITEWELCOME() {
+UPDATER=$( ln -s /usr/share/applications/lite_welcome.desktop /home/$USER/.config/autostart && sleep 2 |
+zenity --progress --percentage=20  --title="Setting Lite Welcome to autostart..." \
+--width=600 --auto-close)
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nSeting lite-welcome to autostart on first boot!"
+             fi
+unset UPDATER
+}
+
+# Change launchers from xdg-open to exo-open - to do (path is /home/$USER/.local/share/applications/)
+# In 32bit version, file are: exo-terminal-emulator.desktop, alacarte-made-2.desktop, alacarte-made-4.desktop, alacarte-made-5.desktop, alacarte-made-6.desktop
+# In 64bit version, file are: exo-terminal-emulator.desktop, Thunar.desktop, alacarte-made-2.desktop
+XDGTOEXO() {
+    echo "#Changing launchers from xdg-open to exo-open..."
+        sed -i "s/Exec=xdg-open/Exec=exo-open/g" /home/$USER/.local/share/applications/exo-terminal-emulator.desktop
+        sed -i "s/Exec=xdg-open/Exec=exo-open/g" /home/$USER/.local/share/applications/alacarte-made-2.desktop
+        sed -i "s/Exec=xdg-open/Exec=exo-open/g" /home/$USER/.local/share/applications/alacarte-made-4.desktop
+        sed -i "s/Exec=xdg-open/Exec=exo-open/g" /home/$USER/.local/share/applications/alacarte-made-5.desktop
+        sed -i "s/Exec=xdg-open/Exec=exo-open/g" /home/$USER/.local/share/applications/alacarte-made-6.desktop
+        cp /home/$USER/.local/share/applications/exo-terminal-emulator.desktop /etc/skel/.local/share/applications/
+        cp /home/$USER/.local/share/applications/alacarte-made-2.desktop /etc/skel/.local/share/applications/
+        cp /home/$USER/.local/share/applications/alacarte-made-4.desktop /etc/skel/.local/share/applications/
+        cp /home/$USER/.local/share/applications/alacarte-made-5.desktop /etc/skel/.local/share/applications/
+        cp /home/$USER/.local/share/applications/alacarte-made-6.desktop /etc/skel/.local/share/applications/
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nChanging launchers from xdg-open to exo-open!"
+                        fi
+}
+
+XDGTOEXO64() {
+    echo "#Changing launchers from xdg-open to exo-open..."
+        sed -i "s/Exec=xdg-open/Exec=exo-open/g" /home/$USER/.local/share/applications/exo-terminal-emulator.desktop
+        sed -i "s/Exec=xdg-open/Exec=exo-open/g" /home/$USER/.local/share/applications/alacarte-made-2.desktop
+        cp /home/$USER/.local/share/applications/exo-terminal-emulator.desktop /etc/skel/.local/share/applications/
+        cp /home/$USER/.local/share/applications/alacarte-made-2.desktop /etc/skel/.local/share/applications/
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nChanging launchers from xdg-open to exo-open!"
+                        fi
+}
+
+# Change to gksudo for Install Updates, file is: exo-file-manager.desktop for new GUI Updates
+UPDATECOM() {
+    echo "#Updating to new GUI Updates..."
+        mv /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.local/share/applications/exo-file-manager.desktop.backup
+        mv /etc/skel/.local/share/applications/exo-file-manager.desktop /etc/skel/.local/share/applications/exo-file-manager.desktop.backup
+        touch /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "[Desktop Entry]" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "Version=1.0" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "Type=Application" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "Exec=gksudo /usr/scripts/updates-gui" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "Icon=system-software-installer" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "StartupNotify=true" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "Terminal=false" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "Categories=Utility;X-XFCE;X-Xfce-Toplevel;" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "OnlyShowIn=XFCE;" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "X-XFCE-MimeType=x-scheme-handler/file;x-scheme-handler/trash;" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "Name=Install Updates" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        echo "Comment=Get the latest updates for your computer" >> /home/$USER/.local/share/applications/exo-file-manager.desktop
+        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /etc/skel/.local/share/applications/
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nChanging launcher to GUI Updates!"
+                        fi
+}
+
+# Create new Network Share Settings Menu link, file name will be: alacarte-made-50.desktop
+CNSSGUI() {
+    echo "#Updating to new GUI Network link..."
+        mv /home/$USER/.local/share/applications/alacarte-made-10.desktop /home/$USER/.local/share/applications/alacarte-made-10.desktop.backup
+        mv /home/$USER/.local/share/applications/alacarte-made-11.desktop /home/$USER/.local/share/applications/alacarte-made-11.desktop.backup
+        mv /etc/skel/.local/share/applications/alacarte-made-10.desktop /etc/skel/.local/share/applications/alacarte-made-10.desktop.backup
+        mv /etc/skel/.local/share/applications/alacarte-made-11.desktop /etc/skel/.local/share/applications/alacarte-made-11.desktop.backup
+        touch /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "[Desktop Entry]" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Comment=Set your Network Share Settings" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Terminal=false" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Name=Network Share Settings" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Exec=gksudo /usr/scripts/cnss-gui" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Type=Application" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Icon=network-workgroup" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Categories=XFCE;GTK;System;DesktopSettings;X-XFCE-SettingsDialog;X-XFCE-SystemSettings;" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        cp /home/$USER/.local/share/applications/alacarte-made-50.desktop /etc/skel/.local/share/applications/
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nChanging launcher to CNSS GUI!"
+                        fi
+}
+
+CNSSGUI64() {
+    echo "#Updating to new GUI Network link..."
+        mv /home/$USER/.local/share/applications/alacarte-made-4.desktop /home/$USER/.local/share/applications/alacarte-made-4.desktop.backup
+        mv /home/$USER/.local/share/applications/alacarte-made-5.desktop /home/$USER/.local/share/applications/alacarte-made-5.desktop.backup
+        mv /etc/skel/.local/share/applications/alacarte-made-4.desktop /etc/skel/.local/share/applications/alacarte-made-4.desktop.backup
+        mv /etc/skel/.local/share/applications/alacarte-made-5.desktop /etc/skel/.local/share/applications/alacarte-made-5.desktop.backup
+        touch /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "[Desktop Entry]" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Comment=Set your Network Share Settings" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Terminal=false" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Name=Network Share Settings" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Exec=gksudo /usr/scripts/cnss-gui" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Type=Application" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Icon=network-workgroup" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        echo "Categories=XFCE;GTK;System;DesktopSettings;X-XFCE-SettingsDialog;X-XFCE-SystemSettings;" >> /home/$USER/.local/share/applications/alacarte-made-50.desktop
+        cp /home/$USER/.local/share/applications/alacarte-made-50.desktop /etc/skel/.local/share/applications/
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nChanging launcher to CNSS GUI!"
+                        fi
+}
+
+# Change to new terminal theme, file is: /home/$USER/.config/lxterminal/lxterminal.conf
+TERMTHEME() {
+    echo "#Updating to new Terminal theme..."
+        mv /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.config/lxterminal/lxterminal.conf.backup
+        mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup
+        touch /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "[general]" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "fontname=Monospace 10" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "selchars=-A-Za-z0-9,./?%&#:_" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "scrollback=100000" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "bgcolor=#464646" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "bgalpha=65535" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "fgcolor=#f0f0f0" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "disallowbold=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "cursorblinks=true" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "cursorunderline=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "audiblebell=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "tabpos=top" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "hidescrollbar=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "hidemenubar=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "hideclosebutton=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "disablef10=true" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "disablealt=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        cp /home/$USER/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nChanging the Terminal theme!"
+                        fi
+}
+
+# Implement new Create System Report changes - to do (path is /home/$USER/.local/share/applications/)
+# In 32bit version, file is: alacarte-made-7.desktop
+# In 64bit version, file is: alacarte-made-8.desktop
+# Change - Exec=x-terminal-emulator --geometry=95x25 -t "Create System Report" -e /usr/scripts/info ##to## Exec=gksudo /usr/scripts/systemreport
+
+CREATESYSREP() {
+    echo "#Updating Create System Report entry..."
+        mv /home/$USER/.local/share/applications/alacarte-made-7.desktop /home/$USER/.local/share/applications/alacarte-made-7.desktop.backup
+        touch /home/$USER/.local/share/applications/alacarte-made-7.desktop
+        echo "[Desktop Entry]" >> /home/$USER/.local/share/applications/alacarte-made-7.desktop
+        echo "Comment=Create a detailed System Report of your computer" >> /home/$USER/.local/share/applications/alacarte-made-7.desktop
+        echo "Terminal=false" >> /home/$USER/.local/share/applications/alacarte-made-7.desktop
+        echo "Name=Create System Report" >> /home/$USER/.local/share/applications/alacarte-made-7.desktop
+        echo "Exec=gksudo /usr/scripts/systemreport" >> /home/$USER/.local/share/applications/alacarte-made-7.desktop
+        echo "Type=Application" >> /home/$USER/.local/share/applications/alacarte-made-7.desktop
+        echo "Icon=evolution-tasks" >> /home/$USER/.local/share/applications/alacarte-made-7.desktop
+        cp /home/$USER/.local/share/applications/alacarte-made-7.desktop /etc/skel/.local/share/applications/
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nUpdating Create System Report entry!"
+                        fi
+}
+
+CREATESYSREP64() {
+    echo "#Updating Create System Report entry..."
+        mv /home/$USER/.local/share/applications/alacarte-made-8.desktop /home/$USER/.local/share/applications/alacarte-made-8.desktop.backup
+        touch /home/$USER/.local/share/applications/alacarte-made-8.desktop
+        echo "[Desktop Entry]" >> /home/$USER/.local/share/applications/alacarte-made-8.desktop
+        echo "Comment=Create a detailed System Report of your computer" >> /home/$USER/.local/share/applications/alacarte-made-8.desktop
+        echo "Terminal=false" >> /home/$USER/.local/share/applications/alacarte-made-8.desktop
+        echo "Name=Create System Report" >> /home/$USER/.local/share/applications/alacarte-made-8.desktop
+        echo "Exec=gksudo /usr/scripts/systemreport" >> /home/$USER/.local/share/applications/alacarte-made-8.desktop
+        echo "Type=Application" >> /home/$USER/.local/share/applications/alacarte-made-8.desktop
+        echo "Icon=evolution-tasks" >> /home/$USER/.local/share/applications/alacarte-made-8.desktop
+        cp /home/$USER/.local/share/applications/alacarte-made-8.desktop /etc/skel/.local/share/applications/
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nUpdating Create System Report entry!"
+                        fi
+}
+
+# Add new right click actions to Thunar - to do (path is /home/$USER/.config/Thunar/uca.xml)
+THUNARACTIONS() {
+    echo "#Adding custom actions to Thunar..."
+        sed -i '$ d' /home/$USER/.config/Thunar/uca.xml
+        echo '<action>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <icon>media-optical</icon>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <name>Check MD5SUM</name>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <unique-id>1422219337486382-1</unique-id>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <command>zenity --info --title="Check MD5 for %n" --text="$(md5sum %f)"</command>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <description>Checks the MD5SUM of an image file</description>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <patterns>*.iso;*.ISO;*.img;*.IMG</patterns>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <audio-files/>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <image-files/>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <other-files/>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <text-files/>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '    <video-files/>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '</action>' >> /home/$USER/.config/Thunar/uca.xml
+        echo '</actions>' >> /home/$USER/.config/Thunar/uca.xml
+        cp /home/$USER/.config/Thunar/uca.xml /etc/skel/.config/Thunar/
+        thunar -q
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nAdding custom actions to Thunar!"
+                        fi
+}
+
+# Whisker Menu open with Windows (Super) key- changes /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+MENUSUPERKEY() {
+    echo "#Setting Whisker Menu Super key..."
+        sleep 2
+        xfconf-query --channel xfce4-keyboard-shortcuts --property "/commands/custom/Super_L" --create --type string --set "xfce4-popup-whiskermenu"
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nSetting Whisker Menu Super key!"
+                        fi
+}
+
+# Whisker Menu - changes /home/$USER/.config/xfce4/panel/whiskermenu-1.rc
+WHISKERMENU() {
+    echo "#Applying Whisker Menu changes..."
+        sleep 2
+        sed -i "s/command-lockscreen=xflock4/command-lockscreen=light-locker-command -l/g" /home/$USER/.config/xfce4/panel/whiskermenu-1.rc
+        cp /home/$USER/.config/xfce4/panel/whiskermenu-1.rc /etc/skel/.config/xfce4/panel/
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nApplying Whisker Menu changes!"
+                        fi
+    dbus-send --print-reply --dest=org.xfce.Panel /org/xfce/Panel org.xfce.Panel.Terminate boolean:true
+}
+
+# Clean up
+CLEANUP() {
+    echo "#Cleaning up..."
+        sleep 2
+        rm -rf /home/$USER/.local/share/applications/xarchiver.desktop
+        rm -rf /etc/skel/.local/share/applications/xarchiver.desktop
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nCleaning up!"
+                        fi
+}
+
+REBOOT() {
+# Reboot dialogue 
+# Credit to xunil: http://bbs.archbang.org/viewtopic.php?id=279
+title="Linux Lite Upgrade Complete"
+exit_type=`zenity  --width="400" --height="220" --title="$title" --list --radiolist --column="Select" \
+    --column="Exit Type" --column="Description" \
+    TRUE "Reboot" "Reboot your computer"\
+    FALSE "Shutdown" "Shutdown your computer"\
+    FALSE "Cancel" "Continue using your computer" `
+
+# User must select a target type (Check if they cancelled)
+if [ ! "$exit_type" ]; then
+    zenity --error --title="Error" --text="You must make a selection"
+    zenity --info --title="Linux Lite Upgrade Utility" --text="Upgrade complete.\n\nDon't forget to restart your computer\nto complete the upgrade."
+    exit
+fi
+
+# Action to perform by user
+if [ "$exit_type" = "Reboot" ]
+then
+
+        # Do Reboot here
+    dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart
+
+elif [ "$exit_type" = "Shutdown" ]
+then
+    # Do Shutdown here
+    dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop
+
+else
+
+    # Do Cancel here
+    zenity --info --title="Linux Lite Upgrade Utility" --text="Upgrade complete.\n\nDon't forget to restart your computer\nto complete the upgrade."
+    exit 0
+fi
+}
+
+LL20() {
+# Invoke arrays
+ARRAYA=()       # Array for LL 2.0
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYA+=('MKDIRBUPS')
+    ARRAYA+=('BUPHOMEUSER')
+    ARRAYA+=('XDGTOEXO')
+    ARRAYA+=('UPDATECOM')
+    ARRAYA+=('CNSSGUI')
+    ARRAYA+=('TERMTHEME')
+    ARRAYA+=('CREATESYSREP')            # LL 2.0 only
+    ARRAYA+=('THUNARACTIONS')        # LL 2.0 only
+    ARRAYA+=('MENUSUPERKEY')
+    ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('CLEANUP')
+    ;;
+    amd64)
+    ARRAYA+=('MKDIRBUPS')
+    ARRAYA+=('BUPHOMEUSER64')
+    ARRAYA+=('XDGTOEXO64')
+    ARRAYA+=('UPDATECOM')
+    ARRAYA+=('CNSSGUI64')
+    ARRAYA+=('TERMTHEME')
+    ARRAYA+=('CREATESYSREP64')        # LL 2.0 only
+    ARRAYA+=('THUNARACTIONS')        # LL 2.0 only
+    ARRAYA+=('MENUSUPERKEY')
+    ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('CLEANUP')
+    ;;
+esac
+}
+
+LL22() {
+# Invoke arrays
+ARRAYA=()       # Array for LL 2.2
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYA+=('MKDIRBUPS')
+    ARRAYA+=('BUPHOMEUSER')
+    ARRAYA+=('XDGTOEXO')
+    ARRAYA+=('UPDATECOM')
+    ARRAYA+=('CNSSGUI')
+    ARRAYA+=('TERMTHEME')
+    ARRAYA+=('MENUSUPERKEY')
+    ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('CLEANUP')
+    ;;
+    amd64)
+    ARRAYA+=('MKDIRBUPS')
+    ARRAYA+=('BUPHOMEUSER64')
+    ARRAYA+=('XDGTOEXO64')
+    ARRAYA+=('UPDATECOM')
+    ARRAYA+=('CNSSGUI64')
+    ARRAYA+=('TERMTHEME')
+    ARRAYA+=('MENUSUPERKEY')
+    ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('CLEANUP')
+    ;;
+esac
+}
+
+RUN() {
+# Check if ARRAYA is empty
+# If it is skip the execution
+if [ ${#ARRAYA[@]} -ne 0 ]; then
+
+    x=0
+    for k in "${!ARRAYA[@]}"; do  x=$(( $x + 1 )); done  # Get the total number of selected items in array A
+
+    TOTAL_LINES=$x
+
+    printf '%s \n' "${ARRAYA[@]}"|
+    while read  line
+        do
+            $line     # Execute functions one by one
+            if [ $? = 1 ]; then
+                zenity --error --title="Lite Upgrade" --text="There was an error while performing upgrades:\n ${line}"
+                exit 1
+            fi    
+        let i++
+         (( PERCENTAGE = 100 \* ${i} / ${TOTAL_LINES} ))
+         echo "$PERCENTAGE"
+
+        if [ "$PERCENTAGE" == "100" ]; then
+            echo "#Done"
+            sleep 2
+        fi
+    
+    done| zenity --progress  --title="Lite Upgrade" --auto-kill --auto-close --width=300
+fi
+
+    gksudo /usr/bin/lite-upgrade-system-series2 "$USER"      # Run the next script with superuser privileges
+
+LLVER=$(awk '{print $3}' /etc/llver)
+if [ "$LLVER" == "2.4" ]; then
+
+    # Set lite-welcome to autostart on first boot
+    LITEWELCOME
+
+    # Call the reboot dialogue
+    REBOOT
+
+else
+    zenity --info --title="Linux Lite Upgrade Utility" --text="Upgrade canceled."
+fi
+}
+
+# First dialogue box
+zenity --question --title="Linux Lite Upgrade Utility" --window-icon="/usr/share/icons/zenity-llcc.png" \
+--text="We will now Upgrade your system to Linux Lite 2.4\n\nPlease ensure you are connected to the internet before you start.\n\nAt the end of this upgrade, please reboot to complete the upgrade process.\n\nClick Yes to continue or No to abort."
+
+# If No is clicked then exit
+if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+    zenity --info --title='Linux Lite Upgrade Utility' --text='Upgrade cancelled.' --width="250"
+      exit 0
+fi
+
+#Check the version and start  the appropriate function
+LLVER=$(awk '{print $3}' /etc/llver)
+
+if [ "$LLVER" == "2.0" ]; then
+    LL20
+elif [ "$LLVER" == "2.2" ]; then
+    LL22
+elif [ "$LLVER" == "2.4" ]; then
+    zenity --info --text="You are already running the latest release"
+    exit 0
+fi
+
+RUN
+
+exit 0
