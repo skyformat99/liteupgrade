@@ -102,16 +102,13 @@ case "$arch" in
     ARRAYC+=('UPD1')
     ARRAYC+=('ERASEDPKG')
     ARRAYC+=('CRLCL')
-    ARRAYC+=('ADDPPAS')
     ARRAYC+=('INPKCL')
     ARRAYC+=('ADDWALL1')
-    ARRAYC+=('ADDTHEME1')
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
     ARRAYC+=('SYSAUTH')
     ARRAYC+=('ROOTTERTHEM')
-    ARRAYC+=('ADDROOTBASHRC1')
     ARRAYC+=('NWLOG')
     ;;
     amd64)
@@ -119,16 +116,13 @@ case "$arch" in
     ARRAYC+=('UPD1')
     ARRAYC+=('ERASEDPKG')
     ARRAYC+=('CRLCL')
-    ARRAYC+=('ADDPPAS')
     ARRAYC+=('INPKCL64')
     ARRAYC+=('ADDWALL1')
-    ARRAYC+=('ADDTHEME1')
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
     ARRAYC+=('SYSAUTH')
     ARRAYC+=('ROOTTERTHEM')
-    ARRAYC+=('ADDROOTBASHRC1')
     ARRAYC+=('NWLOG')
     ;;
 esac
@@ -138,34 +132,34 @@ esac
 BUPETCSKEL() {
        echo "#Backing up /etc/skel files..." 
         sleep 2
-        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.config/xfce4/panel/whiskermenu-1.rc /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/exo-terminal-emulator.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/exo-file-manager.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/exo-file-manager.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/alacarte-made-2.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/alacarte-made-4.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/alacarte-made-5.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/alacarte-made-6.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/alacarte-made-7.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/alacarte-made-10.desktop.backup /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/alacarte-made-11.desktop.backup /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.config/Thunar/uca.xml /etc/skel/.llupgradebackup/2.6
+        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.config/xfce4/panel/whiskermenu-1.rc /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/exo-terminal-emulator.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/exo-file-manager.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/exo-file-manager.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/alacarte-made-2.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/alacarte-made-4.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/alacarte-made-5.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/alacarte-made-6.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/alacarte-made-7.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/alacarte-made-10.desktop.backup /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/alacarte-made-11.desktop.backup /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.config/Thunar/uca.xml /etc/skel/.llupgradebackup/2.4
 
 }
 
 BUPETCSKEL64() {
 	echo "#Backing up /etc/skel files..."
         sleep 2
-        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.config/xfce4/panel/whiskermenu-1.rc /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/exo-terminal-emulator.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/exo-file-manager.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/exo-file-manager.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.local/share/applications/alacarte-made-2.desktop /etc/skel/.llupgradebackup/2.6
-        cp /etc/skel/.config/Thunar/uca.xml /etc/skel/.llupgradebackup/2.6
+        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.config/xfce4/panel/whiskermenu-1.rc /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/exo-terminal-emulator.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/exo-file-manager.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/exo-file-manager.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.local/share/applications/alacarte-made-2.desktop /etc/skel/.llupgradebackup/2.4
+        cp /etc/skel/.config/Thunar/uca.xml /etc/skel/.llupgradebackup/2.4
 }
 
 # Get list of available updated packages
@@ -205,18 +199,9 @@ zenity --progress --percentage="$PERCENTAGE"  --title="Automating packaging defa
 unset UPDATER
 }
 
-# Add any new PPA's
-ADDPPAS() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo add-apt-repository ppa:nemh/systemback \-y && sudo apt-get update )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --percentage="$PERCENTAGE"  --title="Adding new PPA's..." \
---width=600 --auto-close )
-unset UPDATER
-}
-
 # Install new packages, remove obsolete packages, clean up
 INPKCL() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner lite-manual catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu cups-pdf gnome-disk-utility browser-plugin-vlc lupin-casper systemback \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
 --width=600 --auto-close )
@@ -224,7 +209,7 @@ unset UPDATER
 }
 
 INPKCL64() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9:amd64 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner lite-manual catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu cups-pdf gnome-disk-utility browser-plugin-vlc lupin-casper systemback \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9:amd64 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
 --width=600 --auto-close )
@@ -243,18 +228,9 @@ zenity --progress --percentage="$PERCENTAGE"  --title="Adding new wallapapers...
 unset UPDATER
 }
 
-# Add new Theme/s
-ADDTHEME1() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/themes/themes.tar.gz && sudo tar -xvf themes.tar.gz -C /usr/share/themes/ && cd /usr/share/backgrounds/xfce/ && sleep 2 )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --percentage="$PERCENTAGE"  --title="Adding new Theme..." \
---width=600 --auto-close )
-unset UPDATER
-}
-
 # Update lsb_release and issue files /etc changes, update /etc/llver
 UPLSBISSUE() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite 2.6\"/g" /etc/lsb-release && echo "Linux Lite 2.6" | sudo tee /etc/llver && echo "Linux Lite 2.6 LTS \n \l" | sudo tee /etc/issue && sleep 2 )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite 2.4\"/g" /etc/lsb-release && echo "Linux Lite 2.4" | sudo tee /etc/llver && echo "Linux Lite 2.4 LTS \n \l" | sudo tee /etc/issue && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p'|
 zenity --progress --percentage="$PERCENTAGE"  --title="Updating version information..." \
 --width=600 --auto-close )
@@ -278,7 +254,7 @@ unset UPDATER
 
 # /lib/plymouth/themes/ubuntu-text/ changes
 LBPLYUB() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/^title=Linux Lite.*$/title=Linux Lite 2.6/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/^title=Ubuntu.*$/title=Linux Lite 2.6/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/black=0x2c001e/black=0x000000/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/white=0xffffff/white=0xffffff/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/brown=0xff4012/brown=0xffff00/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/blue=0x988592/blue=0x000000/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo update-initramfs -u )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/^title=Linux Lite.*$/title=Linux Lite 2.4/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/^title=Ubuntu.*$/title=Linux Lite 2.4/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/black=0x2c001e/black=0x000000/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/white=0xffffff/white=0xffffff/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/brown=0xff4012/brown=0xffff00/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/blue=0x988592/blue=0x000000/g" /lib/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo update-initramfs -u )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Updating boot configuration please wait..." \
 --width=600 --auto-close )
@@ -299,7 +275,7 @@ zenity --progress --percentage="$PERCENTAGE"  --title="Fixing syslog and auth.lo
             fi    
 }
 
-# Set root's Terminal theme - TO BE CHANGED FOR 2.6
+# Set root's Terminal theme
 ROOTTERTHEM() {
 UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup && sudo cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/ && sudo chown root:root /root/.config/lxterminal/lxterminal.conf && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
@@ -308,15 +284,6 @@ zenity --progress --percentage="$PERCENTAGE"  --title="Setting Terminal theme...
             if [ $? = 1 ]; then
                 zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
             fi    
-unset UPDATER
-}
-
-# Add new Root .bashrc
-ADDROOTBASHRC1() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/bashrc-root-2.6 && sudo mv bashrc-root-2.6 .bashrc && sudo mv /tmp/.bashrc /root && sleep 2 )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --percentage="$PERCENTAGE"  --title="Adding new Root Terminal theme..." \
---width=600 --auto-close )
 unset UPDATER
 }
 
@@ -341,8 +308,6 @@ if [ "$LLVER" == "2.0" ]; then
 elif [ "$LLVER" == "2.2" ]; then
     LL22SYSTEM
 elif [ "$LLVER" == "2.4" ]; then
-    LL24SYSTEM
-elif [ "$LLVER" == "2.6" ]; then
     zenity --info --text="You are already running the latest release"
     exit 0
 fi
