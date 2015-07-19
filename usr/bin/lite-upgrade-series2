@@ -92,7 +92,7 @@ zenity --progress --percentage=20  --title="Setting Lite Welcome to autostart...
                         echo "#Error"
                     sleep 2
                                         zenity --error \
-                                        --title="Error" --text="There was an error while\nSeting lite-welcome to autostart on first boot!"
+                                        --title="Error" --text="There was an error while\nSetting Lite Welcome to autostart on first boot!"
              fi
 unset UPDATER
 }
@@ -464,9 +464,9 @@ case "$arch" in
 esac
 }
 
-LL22() {
+LL24() {
 # Invoke arrays
-ARRAYA=()       # Array for LL 2.2
+ARRAYA=()       # Array for LL 2.4
 
 #Check the arch
 arch=$(uname -m)
