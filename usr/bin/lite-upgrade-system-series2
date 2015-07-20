@@ -245,7 +245,7 @@ unset UPDATER
 
 # Add new Theme/s
 ADDTHEME1() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/themes/themes.tar.gz && sudo tar -xvf themes.tar.gz -C /usr/share/themes/ && cd /usr/share/backgrounds/xfce/ && sleep 2 )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/themes/themes.tar.gz && sudo tar -xvf themes.tar.gz -C /usr/share/themes/ && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Adding new Theme..." \
 --width=600 --auto-close )
