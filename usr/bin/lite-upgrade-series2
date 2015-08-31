@@ -92,7 +92,7 @@ zenity --progress --percentage=20  --title="Setting Lite Welcome to autostart...
                         echo "#Error"
                     sleep 2
                                         zenity --error \
-                                        --title="Error" --text="There was an error while\nSetting Lite Welcome to autostart on first boot!"
+                                        --title="Error" --text="There was an error while\nSeting lite-welcome to autostart on first boot!"
              fi
 unset UPDATER
 }
@@ -464,9 +464,9 @@ case "$arch" in
 esac
 }
 
-LL24() {
+LL22() {
 # Invoke arrays
-ARRAYA=()       # Array for LL 2.4
+ARRAYA=()       # Array for LL 2.2
 
 #Check the arch
 arch=$(uname -m)
@@ -501,6 +501,40 @@ case "$arch" in
     ARRAYA+=('CNSSGUI64')
     ARRAYA+=('TERMTHEME')
     ARRAYA+=('MENUSUPERKEY')
+    ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('LOGOUTKEYCOMBO')
+    ARRAYA+=('CLEANUP')
+    ;;
+esac
+}
+
+LL24() {
+# Invoke arrays
+ARRAYA=()       # Array for LL 2.4
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYA+=('MKDIRBUPS')
+    ARRAYA+=('BUPHOMEUSER')
+    ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('LOGOUTKEYCOMBO')
+    ARRAYA+=('CLEANUP')
+    ;;
+    amd64)
+    ARRAYA+=('MKDIRBUPS')
+    ARRAYA+=('BUPHOMEUSER64')
     ARRAYA+=('WHISKERMENU')
     ARRAYA+=('LOGOUTKEYCOMBO')
     ARRAYA+=('CLEANUP')

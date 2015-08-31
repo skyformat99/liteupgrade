@@ -79,7 +79,7 @@ case "$arch" in
 esac
 }
 
-LL24SYSTEM() {
+LL22SYSTEM() {
 # Invoke arrays
 ARRAYB=()
 ARRAYC=()
@@ -130,6 +130,55 @@ case "$arch" in
     ARRAYC+=('ROOTTERTHEM')
     ARRAYC+=('ADDROOTBASHRC1')
     ARRAYC+=('NWLOG')
+    ;;
+esac
+}
+
+LL24SYSTEM() {
+# Invoke arrays
+ARRAYB=()
+ARRAYC=()
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYB+=('BUPETCSKEL')
+    ARRAYC+=('UPD1')
+    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('ADDPPAS')
+    ARRAYC+=('INPKCL')
+    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('ADDTHEME1')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPGRUB')
+    ARRAYC+=('LBPLYUB')
+    ARRAYC+=('SYSAUTH')
+    ARRAYC+=('ADDROOTBASHRC1')
+    ;;
+    amd64)
+    ARRAYB+=('BUPETCSKEL64')
+    ARRAYC+=('UPD1')
+    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('ADDPPAS')
+    ARRAYC+=('INPKCL64')
+    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('ADDTHEME1')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPGRUB')
+    ARRAYC+=('LBPLYUB')
+    ARRAYC+=('SYSAUTH')
+    ARRAYC+=('ADDROOTBASHRC1')
     ;;
 esac
 }
@@ -209,14 +258,14 @@ unset UPDATER
 ADDPPAS() {
 UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo add-apt-repository ppa:nemh/systemback \-y && sudo apt-get update )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --percentage="$PERCENTAGE"  --title="Updating and installing packages, adding new PPA's..." \
+zenity --progress --percentage="$PERCENTAGE"  --title="Adding new PPA's, Downloading and Installing new packages..." \
 --width=600 --auto-close )
 unset UPDATER
 }
 
 # Install new packages, remove obsolete packages, clean up
 INPKCL() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner lite-manual catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu cups-pdf gnome-disk-utility browser-plugin-vlc lupin-casper systemback \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner lite-manual catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu cups-pdf gnome-disk-utility browser-plugin-vlc lupin-casper systemback lite-controlcenter \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
 --width=600 --auto-close )
@@ -224,7 +273,7 @@ unset UPDATER
 }
 
 INPKCL64() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9:amd64 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner lite-manual catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu cups-pdf gnome-disk-utility browser-plugin-vlc lupin-casper systemback \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9:amd64 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner lite-manual catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu cups-pdf gnome-disk-utility browser-plugin-vlc lupin-casper systemback lite-controlcenter \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
 --width=600 --auto-close )
@@ -245,7 +294,7 @@ unset UPDATER
 
 # Add new Theme/s
 ADDTHEME1() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/themes/themes.tar.gz && sudo tar -xvf themes.tar.gz -C /usr/share/themes/ && sleep 2 )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/themes/themes.tar.gz && sudo tar -xvf themes.tar.gz -C /usr/share/themes/ && cd /usr/share/backgrounds/xfce/ && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Adding new Theme..." \
 --width=600 --auto-close )
