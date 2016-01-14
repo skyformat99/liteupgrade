@@ -2,7 +2,7 @@
 #----------------------------------------------------------------
 # Description: Linux Lite Upgrade Script - Home
 # About: For Linux Lite 2.- Series only
-# Authors: Misko_2083, Jerry Bezencon 2015
+# Authors: Misko_2083, Jerry Bezencon
 # Website: https://www.linuxliteos.com
 #----------------------------------------------------------------
 
@@ -17,7 +17,7 @@ ic="/usr/share/icons/zenity-llcc.png"
 MKDIRBUPS() {
     echo "#Creating back up directories..."
     sleep 2
-        mkdir -p /home/$USER/.llupgradebackup/2.6
+        mkdir -p /home/$USER/.llupgradebackup/2.8
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                         echo "#Error"
                     sleep 2
@@ -25,7 +25,7 @@ MKDIRBUPS() {
                                         --title="Error" --text="There was an error while\nCreating back up directories!\nUpgrade canceled."
                     exit 1
                         fi
-     mkdir -p /etc/skel/.llupgradebackup/2.6
+     mkdir -p /etc/skel/.llupgradebackup/2.8
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                         echo "#Error"
                     sleep 2
@@ -40,20 +40,20 @@ MKDIRBUPS() {
 # Backup /home/$USER/ first
 BUPHOMEUSER() {
     echo "#Backing up select home files..."
-        cp /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.config/xfce4/panel/whiskermenu-1.rc /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/exo-terminal-emulator.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/alacarte-made-2.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/alacarte-made-4.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/alacarte-made-5.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/alacarte-made-6.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/alacarte-made-7.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/alacarte-made-10.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/alacarte-made-11.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.config/Thunar/uca.xml /home/$USER/.llupgradebackup/2.6
+        cp /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.config/xfce4/panel/whiskermenu-1.rc /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/exo-terminal-emulator.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/alacarte-made-2.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/alacarte-made-4.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/alacarte-made-5.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/alacarte-made-6.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/alacarte-made-7.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/alacarte-made-10.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/alacarte-made-11.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.config/Thunar/uca.xml /home/$USER/.llupgradebackup/2.8
         sleep 2
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                         echo "#Error"
@@ -65,14 +65,14 @@ BUPHOMEUSER() {
 
 BUPHOMEUSER64() {
     echo "#Backing up select home files..."
-        cp /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.config/xfce4/panel/whiskermenu-1.rc /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/exo-terminal-emulator.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.local/share/applications/alacarte-made-2.desktop /home/$USER/.llupgradebackup/2.6
-        cp /home/$USER/.config/Thunar/uca.xml /home/$USER/.llupgradebackup/2.6
+        cp /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.config/xfce4/panel/whiskermenu-1.rc /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/exo-terminal-emulator.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/exo-file-manager.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.local/share/applications/alacarte-made-2.desktop /home/$USER/.llupgradebackup/2.8
+        cp /home/$USER/.config/Thunar/uca.xml /home/$USER/.llupgradebackup/2.8
         sleep 2
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                         echo "#Error"
@@ -352,6 +352,19 @@ WHISKERMENU() {
     dbus-send --print-reply --dest=org.xfce.Panel /org/xfce/Panel org.xfce.Panel.Terminate boolean:true
 }
 
+# Ctrl+Shift+Esc shortcut, to bring up the XFCE Task Manager- changes /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
+MENUTASKMAN() {
+    echo "#Adding Task Manager shortcut..."
+        sleep 2
+        xfconf-query --channel xfce4-keyboard-shortcuts --property "/commands/custom/<Primary><Alt>Escape" --create --type string --set "xfce4-taskmanager"
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nSetting the Task Manager Key combo!"
+                        fi
+}
+
 # Set Ctrl+Alt+Del for xfce4-session-logout - changes /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml
 LOGOUTKEYCOMBO() {
     echo "#Setting new Logout key combo..."
@@ -444,6 +457,7 @@ case "$arch" in
     ARRAYA+=('THUNARACTIONS')        # LL 2.0 only
     ARRAYA+=('MENUSUPERKEY')
     ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('MENUTASKMAN')
     ARRAYA+=('LOGOUTKEYCOMBO')
     ARRAYA+=('CLEANUP')
     ;;
@@ -458,6 +472,7 @@ case "$arch" in
     ARRAYA+=('THUNARACTIONS')        # LL 2.0 only
     ARRAYA+=('MENUSUPERKEY')
     ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('MENUTASKMAN')
     ARRAYA+=('LOGOUTKEYCOMBO')
     ARRAYA+=('CLEANUP')
     ;;
@@ -490,6 +505,7 @@ case "$arch" in
     ARRAYA+=('TERMTHEME')
     ARRAYA+=('MENUSUPERKEY')
     ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('MENUTASKMAN')
     ARRAYA+=('LOGOUTKEYCOMBO')
     ARRAYA+=('CLEANUP')
     ;;
@@ -502,6 +518,7 @@ case "$arch" in
     ARRAYA+=('TERMTHEME')
     ARRAYA+=('MENUSUPERKEY')
     ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('MENUTASKMAN')
     ARRAYA+=('LOGOUTKEYCOMBO')
     ARRAYA+=('CLEANUP')
     ;;
@@ -529,6 +546,7 @@ case "$arch" in
     ARRAYA+=('MKDIRBUPS')
     ARRAYA+=('BUPHOMEUSER')
     ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('MENUTASKMAN')
     ARRAYA+=('LOGOUTKEYCOMBO')
     ARRAYA+=('CLEANUP')
     ;;
@@ -536,8 +554,39 @@ case "$arch" in
     ARRAYA+=('MKDIRBUPS')
     ARRAYA+=('BUPHOMEUSER64')
     ARRAYA+=('WHISKERMENU')
+    ARRAYA+=('MENUTASKMAN')
     ARRAYA+=('LOGOUTKEYCOMBO')
     ARRAYA+=('CLEANUP')
+    ;;
+esac
+}
+
+LL26() {
+# Invoke arrays
+ARRAYA=()       # Array for LL 2.6
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYA+=('MKDIRBUPS')
+    ARRAYA+=('BUPHOMEUSER')
+    ARRAYA+=('MENUTASKMAN')
+    ;;
+    amd64)
+    ARRAYA+=('MKDIRBUPS')
+    ARRAYA+=('BUPHOMEUSER64')
+    ARRAYA+=('MENUTASKMAN')
     ;;
 esac
 }
@@ -575,7 +624,7 @@ fi
     gksudo /usr/bin/lite-upgrade-system-series2 "$USER"      # Run the next script with superuser privileges
 
 LLVER=$(awk '{print $3}' /etc/llver)
-if [ "$LLVER" == "2.6" ]; then
+if [ "$LLVER" == "2.8" ]; then
 
     # Set lite-welcome to autostart on first boot
     LITEWELCOME
@@ -590,7 +639,7 @@ fi
 
 # First dialogue box
 zenity --question --title="Linux Lite Upgrade Utility" --window-icon="/usr/share/icons/zenity-llcc.png" \
---text="We will now Upgrade your system to Linux Lite 2.6\n\nPlease ensure you are connected to the internet before you start.\n\nAt the end of this upgrade, please reboot to complete the upgrade process.\n\nClick Yes to continue or No to abort."
+--text="We will now Upgrade your system to Linux Lite 2.8\n\nPlease ensure you are connected to the internet before you start.\n\nAt the end of this upgrade, please reboot to complete the upgrade process.\n\nClick Yes to continue or No to abort."
 
 # If No is clicked then exit
 if [ "${PIPESTATUS[0]}" -ne "0" ]; then
@@ -608,6 +657,8 @@ elif [ "$LLVER" == "2.2" ]; then
 elif [ "$LLVER" == "2.4" ]; then
     LL24
 elif [ "$LLVER" == "2.6" ]; then
+    LL26
+elif [ "$LLVER" == "2.8" ]; then
     zenity --info --text="You are already running the latest release"
     exit 0
 fi
