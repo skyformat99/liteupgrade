@@ -92,7 +92,7 @@ zenity --progress --percentage=20  --title="Setting Lite Welcome to autostart...
                         echo "#Error"
                     sleep 2
                                         zenity --error \
-                                        --title="Error" --text="There was an error while\nSetting Lite Welcome to autostart on first boot!"
+                                        --title="Error" --text='There was an error while setting\nLite Welcome to autostart on first boot!\n\n(You may already have it enabled)'
              fi
 unset UPDATER
 }
