@@ -356,7 +356,7 @@ WHISKERMENU() {
 MENUTASKMAN() {
     echo "#Adding Task Manager shortcut..."
         sleep 2
-        xfconf-query --channel xfce4-keyboard-shortcuts --property "/commands/custom/<Primary><Alt>Escape" --create --type string --set "xfce4-taskmanager"
+        xfconf-query --channel xfce4-keyboard-shortcuts --property "/commands/custom/<Primary><Shift>Escape" --create --type string --set "xfce4-taskmanager"
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                         echo "#Error"
                     sleep 2

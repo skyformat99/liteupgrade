@@ -208,12 +208,10 @@ case "$arch" in
     ARRAYC+=('ADDPPAS')
     ARRAYC+=('INPKCL')
     ARRAYC+=('ADDWALL1')
-    ARRAYC+=('ADDTHEME1')
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
     ARRAYC+=('SYSAUTH')
-    ARRAYC+=('ADDROOTBASHRC1')
     ;;
     amd64)
     ARRAYB+=('BUPETCSKEL64')
@@ -222,12 +220,10 @@ case "$arch" in
     ARRAYC+=('ADDPPAS')
     ARRAYC+=('INPKCL64')
     ARRAYC+=('ADDWALL1')
-    ARRAYC+=('ADDTHEME1')
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
     ARRAYC+=('SYSAUTH')
-    ARRAYC+=('ADDROOTBASHRC1')
     ;;
 esac
 }
@@ -314,7 +310,7 @@ unset UPDATER
 
 # Install new packages, remove obsolete packages, clean up
 INPKCL() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner lite-manual catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu cups-pdf gnome-disk-utility browser-plugin-vlc lupin-casper systemback lite-controlcenter ttf-ubuntu-font-family gufw thunar-media-tags-plugin btrfs-tools libhal1-flash libde265 vlc-plugin-libde265 xbacklight \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner lite-manual catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu cups-pdf gnome-disk-utility browser-plugin-vlc lupin-casper systemback lite-controlcenter ttf-ubuntu-font-family gufw thunar-media-tags-plugin btrfs-tools libhal1-flash libde265 vlc-plugin-libde265 xbacklight xdg-user-dirs-gtk gtk2-engines \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
 --width=600 --auto-close )
@@ -322,7 +318,7 @@ unset UPDATER
 }
 
 INPKCL64() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9:amd64 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner lite-manual catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu cups-pdf gnome-disk-utility browser-plugin-vlc lupin-casper systemback lite-controlcenter ttf-ubuntu-font-family gufw thunar-media-tags-plugin btrfs-tools libhal1-flash libde265 vlc-plugin-libde265 xbacklight \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade \-y && sudo apt-get install locate vpnc openconnect network-manager-openconnect-gnome network-manager-vpnc-gnome gvfs-fuse network-manager-openvpn mugshot ntp ntpdate tumbler-plugins-extra mtpfs libmtp9:amd64 libmtp-runtime libmtp-common mtp-tools libnet-smtp-ssl-perl exfat-fuse exfat-utils inxi libreoffice-gnome dmz-cursor-theme file-roller lite-welcome lite-cleaner lite-manual catfish deja-dup system-config-date light-locker thunar-archive-plugin whiskermenu cups-pdf gnome-disk-utility browser-plugin-vlc lupin-casper systemback lite-controlcenter ttf-ubuntu-font-family gufw thunar-media-tags-plugin btrfs-tools libhal1-flash libde265 vlc-plugin-libde265 xbacklight xdg-user-dirs-gtk gtk2-engines \-y && sudo apt-get update \-y && sudo apt-get remove xarchiver \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
 --width=600 --auto-close )
