@@ -5,4 +5,4 @@ Authors - [Jerry Bezencon,](https://github.com/linuxlite/) [Misko-2083](https://
 
 Software to upgrade Linux Lite from within a series.
 
-![](http://i.imgur.com/7yyL6bK.png)
+![](http://i.imgur.com/K8GlAMh.png)
