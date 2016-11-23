@@ -1,0 +1,300 @@
+#!/bin/bash
+#----------------------------------------------------------------
+# Description: Linux Lite Upgrade Script - Home
+# About: For Linux Lite 3.- Series only
+# Licence: GPLv2 Sharing is Caring
+# Author: Jerry Bezencon
+# Credits: Misko_2083
+# Website: https://www.linuxliteos.com
+#----------------------------------------------------------------
+
+# Ensure multi-language support
+export LANG=C
+
+# Linux Lite default dialog icon
+ic="/usr/share/icons/zenity-llcc.png"
+
+# Set functions for non-root execution
+# The ones that need root go to the other file: lite-upgrade-system-series3
+MKDIRBUPS() {
+    echo "#Creating back up directories..."
+    sleep 2
+        mkdir -p /home/$USER/.llupgradebackup/3.0
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nCreating back up directories!\nUpgrade canceled."
+                    exit 1
+                        fi
+     mkdir -p /etc/skel/.llupgradebackup/3.0
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nCreating back up directories!\nUpgrade canceled."
+                    exit 1
+                        fi
+}
+
+# Copy all original files from /home/user and /etc/skel to their respective backup folders and versions
+
+# Backup /home/$USER/ first
+BUPHOMEUSER() {
+    echo "#Backing up select home files..."
+	chmod 755 /home/$USER/.config/htop/
+	chmod 755 /home/$USER/.config/lxterminal/
+        cp /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.llupgradebackup/3.0
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nBacking up select home files!"
+                        fi
+}
+
+# Add Lite Desktop Widget
+ADDCONKY() {
+UPDATER=$( stdbuf -oL /bin/bash \-c '(cd ~/ && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz && sleep 2 )' 2>&1 |
+stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+zenity --progress --percentage="$PERCENTAGE"  --title="Adding Lite Desktop Widget..." \
+--width=600 --auto-close )
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text='There was an error while adding\nthe Lite Desktop Widget!'
+             fi
+unset UPDATER
+}
+
+# Modify terminal theme, file is: /home/$USER/.config/lxterminal/lxterminal.conf
+TERMTHEME() {
+    echo "#Updating to new Terminal theme..."
+        mv /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.config/lxterminal/lxterminal.conf.backup
+        mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup
+        touch /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "[general]" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "fontname=Monospace 10" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "selchars=-A-Za-z0-9,./?%&#:_" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "scrollback=100000" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "bgcolor=#1A1E1F" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "bgalpha=65535" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "fgcolor=#f0f0f0" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "disallowbold=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "cursorblinks=true" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "cursorunderline=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "audiblebell=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "tabpos=top" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "hidescrollbar=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "hidemenubar=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "hideclosebutton=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "disablef10=true" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        echo "disablealt=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
+        cp /home/$USER/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nChanging the Terminal theme!"
+                        fi
+}
+
+# Set lite-welcome to autostart on first boot
+# Executes at the end because the package lite-welcome needs to be installed first
+LITEWELCOME() {
+UPDATER=$( ln -s /usr/share/applications/lite_welcome.desktop /home/$USER/.config/autostart && sleep 2 |
+zenity --progress --percentage=20  --title="Setting Lite Welcome to autostart..." \
+--width=600 --auto-close)
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text='There was an error while setting\nLite Welcome to autostart on first boot!\n\n(You may already have it enabled)'
+             fi
+unset UPDATER
+}
+
+# Change to new HTOP theme, file is: /home/$USER/.config/htop/htoprc
+HTOPTHEME() {
+    echo "#Updating to new Resource Usage theme..."
+        touch /home/$USER/.config/htop/htoprc
+        echo "fields=0 48 17 18 38 39 40 2 46 47 49 1" >> /home/$USER/.config/htop/htoprc
+        echo "sort_key=46" >> /home/$USER/.config/htop/htoprc
+        echo "sort_direction=1" >> /home/$USER/.config/htop/htoprc
+        echo "hide_threads=0" >> /home/$USER/.config/htop/htoprc
+        echo "hide_kernel_threads=1" >> /home/$USER/.config/htop/htoprc
+        echo "hide_userland_threads=0" >> /home/$USER/.config/htop/htoprc
+        echo "shadow_other_users=0" >> /home/$USER/.config/htop/htoprc
+        echo "show_thread_names=0" >> /home/$USER/.config/htop/htoprc
+        echo "show_program_path=1" >> /home/$USER/.config/htop/htoprc
+        echo "highlight_base_name=0" >> /home/$USER/.config/htop/htoprc
+        echo "highlight_megabytes=1" >> /home/$USER/.config/htop/htoprc
+        echo "highlight_threads=1" >> /home/$USER/.config/htop/htoprc
+        echo "tree_view=0" >> /home/$USER/.config/htop/htoprc
+        echo "header_margin=1" >> /home/$USER/.config/htop/htoprc
+        echo "detailed_cpu_time=0" >> /home/$USER/.config/htop/htoprc
+        echo "cpu_count_from_zero=0" >> /home/$USER/.config/htop/htoprc
+        echo "update_process_names=0" >> /home/$USER/.config/htop/htoprc
+        echo "account_guest_in_cpu_meter=0" >> /home/$USER/.config/htop/htoprc
+        echo "color_scheme=5" >> /home/$USER/.config/htop/htoprc
+        echo "delay=15" >> /home/$USER/.config/htop/htoprc
+        echo "left_meters=LeftCPUs2 Memory Swap" >> /home/$USER/.config/htop/htoprc
+        echo "left_meter_modes=1 1 1" >> /home/$USER/.config/htop/htoprc
+        echo "right_meters=RightCPUs2 Tasks LoadAverage Uptime" >> /home/$USER/.config/htop/htoprc
+        echo "right_meter_modes=1 2 2 2" >> /home/$USER/.config/htop/htoprc
+        cp /home/$USER/.config/htop/htoprc /etc/skel/.config/htop/
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nChanging the Terminal theme!"
+                        fi
+}
+
+REBOOT() {
+# Reboot dialogue 
+# Credit to xunil: http://bbs.archbang.org/viewtopic.php?id=279
+title="Linux Lite Upgrade Complete"
+exit_type=`zenity  --width="400" --height="220" --title="$title" --list --radiolist --column="Select" \
+    --column="Exit Type" --column="Description" \
+    TRUE "Reboot" "Reboot your computer"\
+    FALSE "Shutdown" "Shutdown your computer"\
+    FALSE "Cancel" "Continue using your computer" `
+
+# User must select a target type (Check if they cancelled)
+if [ ! "$exit_type" ]; then
+    zenity --error --title="Error" --text="You must make a selection"
+    zenity --info --title="Linux Lite Upgrade Utility" --text="Upgrade complete.\n\nDon't forget to restart your computer\nto complete the upgrade."
+    exit
+fi
+
+# Action to perform by user
+if [ "$exit_type" = "Reboot" ]
+then
+
+        # Do Reboot here
+    dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart
+
+elif [ "$exit_type" = "Shutdown" ]
+then
+    # Do Shutdown here
+    dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop
+
+else
+
+    # Do Cancel here
+    zenity --info --title="Linux Lite Upgrade Utility" --text="Upgrade complete.\n\nDon't forget to restart your computer\nto complete the upgrade."
+    exit 0
+fi
+}
+
+LL30() {
+# Invoke arrays
+ARRAYA=()       # Array for LL 3.0
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYA+=('MKDIRBUPS')
+    ARRAYA+=('BUPHOMEUSER')
+    ARRAYA+=('ADDCONKY')
+    ARRAYA+=('TERMTHEME')
+    ARRAYA+=('LITEWELCOME')
+    ARRAYA+=('HTOPTHEME')
+    ;;
+    amd64)
+    ARRAYA+=('MKDIRBUPS')
+    ARRAYA+=('BUPHOMEUSER')
+    ARRAYA+=('ADDCONKY')
+    ARRAYA+=('TERMTHEME')
+    ARRAYA+=('LITEWELCOME')
+    ARRAYA+=('HTOPTHEME')
+    ;;
+esac
+}
+
+RUN() {
+# Check if ARRAYA is empty
+# If it is skip the execution
+if [ ${#ARRAYA[@]} -ne 0 ]; then
+
+    x=0
+    for k in "${!ARRAYA[@]}"; do  x=$(( $x + 1 )); done  # Get the total number of selected items in array A
+
+    TOTAL_LINES=$x
+
+    printf '%s \n' "${ARRAYA[@]}"|
+    while read  line
+        do
+            $line     # Execute functions one by one
+            if [ $? = 1 ]; then
+                zenity --error --title="Lite Upgrade" --text="There was an error while performing upgrades:\n ${line}"
+                exit 1
+            fi    
+        let i++
+         (( PERCENTAGE = 100 \* ${i} / ${TOTAL_LINES} ))
+         echo "$PERCENTAGE"
+
+        if [ "$PERCENTAGE" == "100" ]; then
+            echo "#Done"
+            sleep 2
+        fi
+    
+    done| zenity --progress  --title="Lite Upgrade" --auto-kill --auto-close --width=300
+fi
+
+    gksudo /usr/bin/lite-upgrade-system-series3 "$USER"      # Run the next script with superuser privileges
+
+#LLVER=$(awk '{print $3}' /etc/llver)
+if grep "Linux Lite 3.2" /etc/llver; then
+
+    # Set lite-welcome to autostart on first boot
+    # LITEWELCOME
+
+    # Call the reboot dialogue
+    REBOOT
+
+else
+    zenity --info --title="Linux Lite Upgrade Utility" --text="Upgrade canceled."
+fi
+}
+
+#Check the version and start  the appropriate function
+#LLVER=$(awk '{print $3}' /etc/llver)
+
+if grep "Linux Lite 3.0" /etc/llver; then
+    LL30
+else
+
+    zenity --info --text="You are already running the latest release"
+    exit 0
+fi
+
+# First dialogue box
+zenity --question --title="Linux Lite Upgrade Utility" --window-icon="/usr/share/icons/zenity-llcc.png" \
+--text="We will now Upgrade your system to Linux Lite 3.2\n\nPlease ensure you are connected to the internet before you start.\n\nAt the end of this upgrade, please reboot to complete the upgrade process.\n\nClick Yes to continue or No to abort."
+
+# If No is clicked then exit
+if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+    zenity --info --title='Linux Lite Upgrade Utility' --text='Upgrade cancelled.' --width="250"
+      exit 0
+fi
+
+RUN
+
+exit 0
