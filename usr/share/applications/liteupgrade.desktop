@@ -2,10 +2,11 @@
 Version=1.0
 Categories=XFCE;GTK;Settings;DesktopSettings;X-XFCE-SettingsDialog;X-XFCE-SystemSettings;
 Encoding=UTF-8
-Exec=lite-upgrade-series2
+Exec=lite-upgrade-series3
 Icon=update-manager
 StartupNotify=true
 OnlyShowIn=XFCE;
+NoDisplay=false
 Terminal=false
 Type=Application
 Name=Lite Upgrade
