@@ -280,8 +280,8 @@ fi
 if grep "Linux Lite 3.0" /etc/llver; then
     LL30
 else
-
-    zenity --info --text="You are already running the latest release"
+     zenity --info  --title="          Lite Upgrade Info" --width=260 --height=60 --icon-name=info \
+	    --text="\nYou are already running the latest release."
     exit 0
 fi
 
