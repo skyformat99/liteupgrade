@@ -205,7 +205,8 @@ elif [ "$LLVER" == "3.2" ]; then
 #elif [ "$LLVER" == "3.6" ]; then
 #    LL36SYSTEM
 #elif [ "$LLVER" == "3.8" ]; then
-    zenity --info --text="You are already running the latest release"
+    zenity --info  --title="          Lite Upgrade Info" --width=260 --height=60 --icon-name=info \
+	   --text="\nYou are already running the latest release."
     exit 0
 fi
 
