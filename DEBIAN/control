@@ -1,0 +1,14 @@
+Package: lite-upgrade-series3
+Version: 2.0-0050-linuxlite
+Essential: yes
+Section: base
+Priority: required
+Installed-Size: 25
+Depends: apt, zenity, gksu
+Homepage: http://www.linuxliteos.com
+Maintainer: Jerry Bezencon<valtam@linuxliteos.com>
+Architecture: all
+Description: Lite Upgrade Series 3
+ An application to upgrade Linux Lite
+ from within the Series 3 releases to the
+ latest stable version of Linux Lite.
