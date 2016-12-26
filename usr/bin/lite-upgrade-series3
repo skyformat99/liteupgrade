@@ -17,61 +17,60 @@ ic="/usr/share/icons/zenity-llcc.png"
 # Set functions for non-root execution
 # The ones that need root go to the other file: lite-upgrade-system-series3
 MKDIRBUPS() {
-    echo "#Creating back up directories..."
+    echo "#✔ Creating back up directories..."
     sleep 2
-        mkdir -p /home/$USER/.llupgradebackup/3.0
-            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text="There was an error while\nCreating back up directories!\nUpgrade canceled."
-                    exit 1
-                        fi
-     mkdir -p /etc/skel/.llupgradebackup/3.0
-            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text="There was an error while\nCreating back up directories!\nUpgrade canceled."
-                    exit 1
-                        fi
+    mkdir -p /home/$USER/.llupgradebackup/3.0
+        if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+            echo "#Error"
+            sleep 1
+            zenity --error --width="320" --title="  Error" \
+                   --text="\nAn error occurred while creating back up directories! \n\nUpgrade canceled."
+            exit 1
+        fi
+    mkdir -p /etc/skel/.llupgradebackup/3.0
+        if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+            echo "#Error"
+            sleep 1
+            zenity --error --width="320" --title="  Error" \
+                   --text="\nAn error occurred while creating back up directories! \n\nUpgrade canceled."
+            exit 1
+        fi
 }
 
 # Copy all original files from /home/user and /etc/skel to their respective backup folders and versions
-
 # Backup /home/$USER/ first
 BUPHOMEUSER() {
-    echo "#Backing up select home files..."
+    echo "#✔ Backing up select home files..."
 	chmod 755 /home/$USER/.config/htop/
 	chmod 755 /home/$USER/.config/lxterminal/
-        cp /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.llupgradebackup/3.0
-        sleep 2
-            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text="There was an error while\nBacking up select home files!"
-                        fi
+    cp /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.llupgradebackup/3.0
+    sleep 2
+        if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+            echo "#Error"
+            sleep 1
+            zenity --error --width="320" --title="  Error" \
+                   --text="\nAn error occurred while backing up select home files!"
+        fi
 }
 
 # Add Lite Desktop Widget
 ADDCONKY() {
 UPDATER=$( stdbuf -oL /bin/bash \-c '(cd ~/ && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --percentage="$PERCENTAGE"  --title="Adding Lite Desktop Widget..." \
+zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Adding Lite Desktop Widget..." \
 --width=600 --auto-close )
-            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text='There was an error while adding\nthe Lite Desktop Widget!'
-             fi
+        if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+            echo "#Error"
+            sleep 1
+            zenity --error --width="220" --title="  Error" \
+                   --text="\nAn error occurred while adding the Lite Desktop Widget!"
+        fi
 unset UPDATER
 }
 
 # Modify terminal theme, file is: /home/$USER/.config/lxterminal/lxterminal.conf
 TERMTHEME() {
-    echo "#Updating to new Terminal theme..."
+    echo "#✔ Updating to new Terminal theme..."
         mv /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.config/lxterminal/lxterminal.conf.backup
         mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup
         touch /home/$USER/.config/lxterminal/lxterminal.conf
@@ -95,11 +94,11 @@ TERMTHEME() {
         cp /home/$USER/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/
         sleep 2
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text="There was an error while\nChanging the Terminal theme!"
-                        fi
+                echo "#Error"
+                sleep 1
+                zenity --error --width="220" --title="  Error" \
+                       --text="\nAn error occurred while changing the Terminal theme!"
+            fi
 }
 
 # Set lite-welcome to autostart on first boot
@@ -109,17 +108,17 @@ UPDATER=$( ln -s /usr/share/applications/lite_welcome.desktop /home/$USER/.confi
 zenity --progress --percentage=20  --title="Setting Lite Welcome to autostart..." \
 --width=600 --auto-close)
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text='There was an error while setting\nLite Welcome to autostart on first boot!\n\n(You may already have it enabled)'
+                echo "#Error"
+                sleep 1
+                zenity --error --width="320" --title="   Error" \
+                       --text="\nAn error occurred while setting Lite Welcome to autostart on first boot! \n\n( You may already have it enabled )"
              fi
 unset UPDATER
 }
 
 # Change to new HTOP theme, file is: /home/$USER/.config/htop/htoprc
 HTOPTHEME() {
-    echo "#Updating to new Resource Usage theme..."
+    echo "#✔ Updating to new Resource Usage theme..."
         touch /home/$USER/.config/htop/htoprc
         echo "fields=0 48 17 18 38 39 40 2 46 47 49 1" >> /home/$USER/.config/htop/htoprc
         echo "sort_key=46" >> /home/$USER/.config/htop/htoprc
@@ -148,48 +147,41 @@ HTOPTHEME() {
         cp /home/$USER/.config/htop/htoprc /etc/skel/.config/htop/
         sleep 2
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text="There was an error while\nChanging the Terminal theme!"
-                        fi
+                echo "#Error"
+                sleep 1
+                zenity --error --width="220" --title="   Error" \
+                       --text="\nAn error occurred while changing the Terminal theme!"
+            fi
 }
 
 REBOOT() {
-# Reboot dialogue 
+# Reboot dialog
 # Credit to xunil: http://bbs.archbang.org/viewtopic.php?id=279
-title="Linux Lite Upgrade Complete"
-exit_type=`zenity  --width="400" --height="220" --title="$title" --list --radiolist --column="Select" \
+while (true); do
+title="  Linux Lite Upgrade Utility"
+exit_type=`zenity --width="320" --height="140" \
+--title="$title" --text="   <b>Upgrade routine successfully completed...</b>\n\n" \
+--list --radiolist --hide-header --column="Select" \
     --column="Exit Type" --column="Description" \
-    TRUE "Reboot" "Reboot your computer"\
-    FALSE "Shutdown" "Shutdown your computer"\
-    FALSE "Cancel" "Continue using your computer" `
+    TRUE "Restart" "Reboot your computer now" \
+    FALSE "Shutdown" "Shutdown your computer now" `
 
 # User must select a target type (Check if they cancelled)
 if [ ! "$exit_type" ]; then
-    zenity --error --title="Error" --text="You must make a selection"
-    zenity --info --title="Linux Lite Upgrade Utility" --text="Upgrade complete.\n\nDon't forget to restart your computer\nto complete the upgrade."
-    exit
+    zenity --warning --timeout=6 --width="320" --title="$title - Warning" --text="\nYou should either <b>Restart</b> or <b>Shutdown</b> the system at this point. It is highly recommended to do so!"
+    continue
 fi
 
 # Action to perform by user
-if [ "$exit_type" = "Reboot" ]
-then
-
-        # Do Reboot here
+if [ "$exit_type" = "Reboot" ]; then
+    # Do Reboot here
     dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart
 
-elif [ "$exit_type" = "Shutdown" ]
-then
+elif [ "$exit_type" = "Shutdown" ]; then
     # Do Shutdown here
     dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop
-
-else
-
-    # Do Cancel here
-    zenity --info --title="Linux Lite Upgrade Utility" --text="Upgrade complete.\n\nDon't forget to restart your computer\nto complete the upgrade."
-    exit 0
 fi
+done
 }
 
 LL30() {
@@ -243,7 +235,7 @@ if [ ${#ARRAYA[@]} -ne 0 ]; then
         do
             $line     # Execute functions one by one
             if [ $? = 1 ]; then
-                zenity --error --title="Lite Upgrade" --text="There was an error while performing upgrades:\n ${line}"
+                zenity --error --title="  Lite Upgrade" --text="\nAn error occurred while performing upgrades:\n\n ${line}"
                 exit 1
             fi    
         let i++
@@ -255,7 +247,7 @@ if [ ${#ARRAYA[@]} -ne 0 ]; then
             sleep 2
         fi
     
-    done| zenity --progress  --title="Lite Upgrade" --auto-kill --auto-close --width=300
+    done| zenity --progress  --title="  Lite Upgrade" --auto-kill --auto-close --width=300
 fi
 
     gksudo /usr/bin/lite-upgrade-system-series3 "$USER"      # Run the next script with superuser privileges
@@ -270,7 +262,7 @@ if grep "Linux Lite 3.2" /etc/llver; then
     REBOOT
 
 else
-    zenity --info --title="Linux Lite Upgrade Utility" --text="Upgrade canceled."
+    zenity --info --width="200" --title=" Linux Lite Upgrade Utility" --text="\nUpgrade has been canceled."
 fi
 }
 
@@ -280,19 +272,24 @@ fi
 if grep "Linux Lite 3.0" /etc/llver; then
     LL30
 else
-     zenity --info  --title="          Lite Upgrade Info" --width=260 --height=60 --icon-name=info \
+     zenity --info  --title="Linux Lite Upgrade Utility" --width=260 --height=60 \
 	    --text="\nYou are already running the latest release."
     exit 0
 fi
 
 # First dialogue box
-zenity --question --title="Linux Lite Upgrade Utility" --window-icon="/usr/share/icons/zenity-llcc.png" \
---text="We will now Upgrade your system to Linux Lite 3.2\n\nPlease ensure you are connected to the internet before you start.\n\nAt the end of this upgrade, please reboot to complete the upgrade process.\n\nClick Yes to continue or No to abort."
+zenity --question --icon-name="info" --width="380" --ok-label="Upgrade Now !" --cancel-label="Cancel" --title="   Linux Lite Upgrade Utility" --window-icon="$ic" \
+--text='\n  <span font="Sans Bold 11">You are about to upgrade to Linux Lite 3.2</span>\n\n\
+• Your computer must be (and stay) connected to the Internet during the upgrade.\n\n\
+• A connectivity check to Linux Lite repositories will be conducted to ensure connection can be established.\n\n\
+
+• Once upgrades have taken place, you MUST restart the system to complete the upgrade process.\n\n\
+Please save your work or click <b>Cancel</b> to exit now; <b>Upgrade</b> to proceed.\n'
 
 # If No is clicked then exit
 if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-    zenity --info --title='Linux Lite Upgrade Utility' --text='Upgrade cancelled.' --width="250"
-      exit 0
+    zenity --info --width="190" --title=" Linux Lite Upgrade Utility" --text="\nUpgrade has been canceled."
+    exit 0
 fi
 
 RUN

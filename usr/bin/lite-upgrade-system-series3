@@ -77,20 +77,18 @@ esac
 
 # Backup /etc/skel/
 BUPETCSKEL() {
-       echo "#Backing up /etc/skel files..." 
-        sleep 2
+    echo "#✔ Backing up /etc/skel files..." 
+    sleep 2
 	chmod 755 /etc/skel/.config/htop/
 	chmod 755 /etc/skel/.config/lxterminal/
-        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0
-
+    cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0
 }
 
 BUPETCSKEL64() {
-	echo "#Backing up /etc/skel files..."
-        sleep 2
+	echo "#✔ Backing up /etc/skel files..."
+    sleep 2
 	chmod 755 /etc/skel/.config/lxterminal/
-        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0
-
+    cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0
 }
 
 # Get list of available updated packages
@@ -205,7 +203,7 @@ elif [ "$LLVER" == "3.2" ]; then
 #elif [ "$LLVER" == "3.6" ]; then
 #    LL36SYSTEM
 #elif [ "$LLVER" == "3.8" ]; then
-    zenity --info  --title="          Lite Upgrade Info" --width=260 --height=60 --icon-name=info \
+    zenity --info  --title="    Lite Upgrade Info" --width=260 --height=60 --icon-name=info \
 	   --text="\nYou are already running the latest release."
     exit 0
 fi
@@ -225,7 +223,7 @@ if [ ${#ARRAYB[@]} -ne 0 ]; then
         do
             $line     # Execute functions one by one
             if [ $? = 1 ]; then
-                zenity --error --title="Lite Upgrade" --text="There was an error while performing upgrades:\n ${line}"
+                zenity --error --title="Lite Upgrade" --text="\nAn error occurred while performing upgrades:\n ${line}"
                 exit 1
             fi    
         let i++
@@ -237,7 +235,7 @@ if [ ${#ARRAYB[@]} -ne 0 ]; then
             sleep 2
         fi
     
-    done| zenity --progress  --title="Lite Upgrade" --auto-kill --auto-close --width=300
+    done| zenity --progress  --title="  Lite Upgrade" --auto-kill --auto-close --width=300
 fi
 
 # Check if ARRAYC is empty
