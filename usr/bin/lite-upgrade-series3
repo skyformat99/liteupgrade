@@ -12,22 +12,15 @@
 export LANG=C
 
 # Linux Lite default dialog icon
-ic="/usr/share/icons/zenity-llcc.png"
+ic=/usr/share/icons/zenity-llcc.png
+run_icon=/usr/share/icons/Faenza/actions/32/system-run.png
 
 # Set functions for non-root execution
 # The ones that need root go to the other file: lite-upgrade-system-series3
 MKDIRBUPS() {
-    echo "#✔ Creating back up directories..."
+    echo "#• Creating back up directories..."
     sleep 2
     mkdir -p /home/$USER/.llupgradebackup/3.0
-        if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-            echo "#Error"
-            sleep 1
-            zenity --error --width="320" --title="  Error" \
-                   --text="\nAn error occurred while creating back up directories! \n\nUpgrade canceled."
-            exit 1
-        fi
-    mkdir -p /etc/skel/.llupgradebackup/3.0
         if [ "${PIPESTATUS[0]}" -ne "0" ]; then
             echo "#Error"
             sleep 1
@@ -40,7 +33,7 @@ MKDIRBUPS() {
 # Copy all original files from /home/user and /etc/skel to their respective backup folders and versions
 # Backup /home/$USER/ first
 BUPHOMEUSER() {
-    echo "#✔ Backing up select home files..."
+    echo "#• Backing up select home files..."
 	chmod 755 /home/$USER/.config/htop/
 	chmod 755 /home/$USER/.config/lxterminal/
     cp /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.llupgradebackup/3.0
@@ -55,10 +48,10 @@ BUPHOMEUSER() {
 
 # Add Lite Desktop Widget
 ADDCONKY() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(cd ~/ && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz && sleep 2 )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Adding Lite Desktop Widget..." \
---width=600 --auto-close )
+    echo "#• Adding Lite Desktop Widget..."
+    UPDATER=$( stdbuf -oL /bin/bash \-c '(cd ~/ && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz && sleep 2 )' 2>&1 |
+    stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+    zenity --progress --width="340" --window-icon="$run_icon" --no-cancel --percentage="$PERCENTAGE" --title="Adding Lite Desktop Widget..." --auto-close )
         if [ "${PIPESTATUS[0]}" -ne "0" ]; then
             echo "#Error"
             sleep 1
@@ -70,9 +63,8 @@ unset UPDATER
 
 # Modify terminal theme, file is: /home/$USER/.config/lxterminal/lxterminal.conf
 TERMTHEME() {
-    echo "#✔ Updating to new Terminal theme..."
+    echo "#• Updating to new Terminal theme..."
         mv /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.config/lxterminal/lxterminal.conf.backup
-        mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup
         touch /home/$USER/.config/lxterminal/lxterminal.conf
         echo "[general]" >> /home/$USER/.config/lxterminal/lxterminal.conf
         echo "fontname=Monospace 10" >> /home/$USER/.config/lxterminal/lxterminal.conf
@@ -91,7 +83,6 @@ TERMTHEME() {
         echo "hideclosebutton=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
         echo "disablef10=true" >> /home/$USER/.config/lxterminal/lxterminal.conf
         echo "disablealt=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
-        cp /home/$USER/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/
         sleep 2
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                 echo "#Error"
@@ -104,9 +95,12 @@ TERMTHEME() {
 # Set lite-welcome to autostart on first boot
 # Executes at the end because the package lite-welcome needs to be installed first
 LITEWELCOME() {
+    echo "#• Setting Lite Welcome to autostart..."
+    if [ -e /home/$USER/.config/autostart/lite_welcome.desktop ]; then
+        continue
+    else
 UPDATER=$( ln -s /usr/share/applications/lite_welcome.desktop /home/$USER/.config/autostart && sleep 2 |
-zenity --progress --percentage=20  --title="Setting Lite Welcome to autostart..." \
---width=600 --auto-close)
+zenity --progress --no-cancel --width="300" --percentage=20 --window-icon="$run_icon"  --title="Setting Lite Welcome to autostart..." --auto-close)
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                 echo "#Error"
                 sleep 1
@@ -114,11 +108,12 @@ zenity --progress --percentage=20  --title="Setting Lite Welcome to autostart...
                        --text="\nAn error occurred while setting Lite Welcome to autostart on first boot! \n\n( You may already have it enabled )"
              fi
 unset UPDATER
+fi
 }
 
 # Change to new HTOP theme, file is: /home/$USER/.config/htop/htoprc
 HTOPTHEME() {
-    echo "#✔ Updating to new Resource Usage theme..."
+    echo "#• Updating to new Resource Usage theme..."
         touch /home/$USER/.config/htop/htoprc
         echo "fields=0 48 17 18 38 39 40 2 46 47 49 1" >> /home/$USER/.config/htop/htoprc
         echo "sort_key=46" >> /home/$USER/.config/htop/htoprc
@@ -144,7 +139,6 @@ HTOPTHEME() {
         echo "left_meter_modes=1 1 1" >> /home/$USER/.config/htop/htoprc
         echo "right_meters=RightCPUs2 Tasks LoadAverage Uptime" >> /home/$USER/.config/htop/htoprc
         echo "right_meter_modes=1 2 2 2" >> /home/$USER/.config/htop/htoprc
-        cp /home/$USER/.config/htop/htoprc /etc/skel/.config/htop/
         sleep 2
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                 echo "#Error"
@@ -158,13 +152,21 @@ REBOOT() {
 # Reboot dialog
 # Credit to xunil: http://bbs.archbang.org/viewtopic.php?id=279
 while (true); do
-title="  Linux Lite Upgrade Utility"
-exit_type=`zenity --width="320" --height="140" \
---title="$title" --text="   <b>Upgrade routine successfully completed...</b>\n\n" \
---list --radiolist --hide-header --column="Select" \
-    --column="Exit Type" --column="Description" \
-    TRUE "Restart" "Reboot your computer now" \
-    FALSE "Shutdown" "Shutdown your computer now" `
+# Set app icon variable
+THEME=$(xfconf-query -c xsettings -p /Net/IconThemeName)
+if [ -f "/home/$USER/.icons/${THEME}/apps/32/system-reboot.png" ]; then
+    APPICON="/home/$USER/.icons/${THEME}"
+elif [ -f "/usr/share/icons/${THEME}/apps/32/system-reboot.png" ]; then
+      APPICON="/usr/share/icons/${THEME}"
+else
+    APPICON="/usr/share/icons/Faenza"
+fi 
+
+title="Lite Upgrade Utility"
+exit_type=`zenity --width="340" --height="180" --window-icon="$ic" --title="$title" --text='                <span font="Sans Bold 10">Upgrade routine completed</span>\n' \
+                  --list --imagelist --print-column=2 --column="  " --column="Action" --column="Description" \
+    "$APPICON/apps/32/system-reboot.png" "Restart" "Reboot your computer now" \
+    "$APPICON/actions/32/system-shutdown.png" "Shutdown" "Shutdown your computer now" `
 
 # User must select a target type (Check if they cancelled)
 if [ ! "$exit_type" ]; then
@@ -173,7 +175,7 @@ if [ ! "$exit_type" ]; then
 fi
 
 # Action to perform by user
-if [ "$exit_type" = "Reboot" ]; then
+if [ "$exit_type" = "Restart" ]; then
     # Do Reboot here
     dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart
 
@@ -247,28 +249,26 @@ if [ ${#ARRAYA[@]} -ne 0 ]; then
             sleep 2
         fi
     
-    done| zenity --progress  --title="  Lite Upgrade" --auto-kill --auto-close --width=300
+    done| zenity --progress --width=300 --window-icon="$run_icon" --no-cancel --title="Lite Upgrade" --auto-kill --auto-close 
 fi
 
-    gksudo /usr/bin/lite-upgrade-system-series3 "$USER"      # Run the next script with superuser privileges
+# elevate to run the next script with superuser privileges
+gksu -m '
+<b>Upgrade Utility requires Administrative privileges</b>
 
-#LLVER=$(awk '{print $3}' /etc/llver)
+
+                Please enter your password to continue.' /usr/bin/lite-upgrade-system-series3
+
 if grep "Linux Lite 3.2" /etc/llver; then
-
-    # Set lite-welcome to autostart on first boot
-    # LITEWELCOME
-
-    # Call the reboot dialogue
+    # Call the reboot dialog
     REBOOT
-
 else
     zenity --info --width="200" --title=" Linux Lite Upgrade Utility" --text="\nUpgrade has been canceled."
+    exit 0
 fi
 }
 
-#Check the version and start  the appropriate function
-#LLVER=$(awk '{print $3}' /etc/llver)
-
+# check current version and start the appropriate function
 if grep "Linux Lite 3.0" /etc/llver; then
     LL30
 else
@@ -279,16 +279,24 @@ fi
 
 # First dialogue box
 zenity --question --icon-name="info" --width="380" --ok-label="Upgrade Now !" --cancel-label="Cancel" --title="   Linux Lite Upgrade Utility" --window-icon="$ic" \
---text='\n  <span font="Sans Bold 11">You are about to upgrade to Linux Lite 3.2</span>\n\n\
-• Your computer must be (and stay) connected to the Internet during the upgrade.\n\n\
-• A connectivity check to Linux Lite repositories will be conducted to ensure connection can be established.\n\n\
-
-• Once upgrades have taken place, you MUST restart the system to complete the upgrade process.\n\n\
+        --text='\n      <span font="Sans Bold 10">You are about to upgrade to Linux Lite 3.2</span>\n\n \
+- Your computer must be (and stay) connected to the Internet during the upgrade.\n \
+- A connectivity check to Linux Lite repositories will be conducted to ensure connection can be established with the server.\n \
+- Once upgrades have taken place, you must restart the system to complete the upgrade process.\n \
 Please save your work or click <b>Cancel</b> to exit now; <b>Upgrade</b> to proceed.\n'
 
-# If No is clicked then exit
+# cancel 
 if [ "${PIPESTATUS[0]}" -ne "0" ]; then
     zenity --info --width="190" --title=" Linux Lite Upgrade Utility" --text="\nUpgrade has been canceled."
+    exit 0
+fi
+
+# Check Internet access
+if eval "curl -sk http://repo.linuxliteos.com" >> /dev/null 2>&1; then
+    :  # continue - internet connection check passed 
+else # Prompt ERROR internet connection check failed and exit
+    zenity --error --width=320 --height=120 --title="  Upgrade Utility - No Internet connection..." \
+           --text="Upgrade Utility was unable to communicate with Linux Lite repositoy server.\n\nPlease check your Internet connection and try again."
     exit 0
 fi
 
