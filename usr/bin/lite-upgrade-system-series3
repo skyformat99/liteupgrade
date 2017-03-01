@@ -14,25 +14,23 @@ export LANG=C
 # Kill off any package managers that may be running
 if [ "$(pidof synaptic)" ] 
 then
-   killall -9 synaptic 
+   sudo killall -9 synaptic 
 else
-   :
+   echo""
 fi
 
 if [ -z "$(pgrep gdebi-gtk)" ]
 then
-   :
+   echo ""
 else
    killall -9 gdebi-gtk
 fi
 
 # Linux Lite default dialog icon
-ic=/usr/share/icons/zenity-llcc.png
-run_icon=/usr/share/icons/Faenza/actions/32/system-run.png
+ic="/usr/share/icons/zenity-llcc.png"
 
 # Get username
-MYUSER=$(sudo -u ${SUDO_USER:-$USER} whoami)
-
+_USER="$@"
 
 LL30SYSTEM() {
 # Invoke arrays
@@ -53,10 +51,7 @@ esac
 # Populate arrays based on the arch
 case "$arch" in
     x86)
-    ARRAYB+=('MKDIRBUPSADM')
-    ARRAYB+=('TERMTHEMEADM')
-    ARRAYB+=('HTOPTHEMEADM')
-    ARRAYB+=('BUPETCSKEL')
+    ARRAYB+=('BUPETCSKEL30')
     ARRAYC+=('UPD1')
     ARRAYC+=('ERASEDPKG')
     ARRAYC+=('INPKCL')
@@ -65,12 +60,10 @@ case "$arch" in
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
     ARRAYC+=('ROOTTERTHEM')
+    ARRAYC+=('UPDCONKSKEL')
     ;;
     amd64)
-    ARRAYB+=('MKDIRBUPSADM')
-    ARRAYB+=('TERMTHEMEADM')
-    ARRAYB+=('HTOPTHEMEADM')
-    ARRAYB+=('BUPETCSKEL64')
+    ARRAYB+=('BUPETCSKEL3064')
     ARRAYC+=('UPD1')
     ARRAYC+=('ERASEDPKG')
     ARRAYC+=('INPKCL64')
@@ -79,56 +72,101 @@ case "$arch" in
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
     ARRAYC+=('ROOTTERTHEM')
+    ARRAYC+=('UPDCONKSKEL')
     ;;
 esac
 }
 
-MKDIRBUPSADM() {
-    echo "#• Creating back up directories..."
-    sleep 2
-    mkdir -p /etc/skel/.llupgradebackup/3.0
-        if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-            echo "#Error"
-            sleep 1
-            zenity --error --width="320" --title="  Error" \
-                   --text="\nAn error occurred while creating back up directories! \n\nUpgrade canceled."
-            exit 1
-        fi
+LL32SYSTEM() {
+# Invoke arrays
+ARRAYB=()
+ARAYC=()
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYB+=('BUPETCSKEL32')
+    ARRAYC+=('UPD1')
+    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('INPKCL')
+    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPGRUB')
+    ARRAYC+=('LBPLYUB')
+    ARRAYC+=('UPDCONKSKEL')
+    ;;
+    amd64)
+    ARRAYB+=('BUPETCSKEL3264')
+    ARRAYC+=('UPD1')
+    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('INPKCL64')
+    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPGRUB')
+    ARRAYC+=('LBPLYUB')
+    ARRAYC+=('UPDCONKSKEL')
+    ;;
+esac
 }
 
+# Backup /etc/skel/ Linux Lite 3.0
+BUPETCSKEL30() {
+       echo "#Backing up /etc/skel files..." 
+        sleep 2
+	mkdir -p /etc/skel/.llupgradebackup/3.0
+        cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.0
+        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0
 
-TERMTHEMEADM() {
-    echo "#• Updating to new Terminal theme..."
-    mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup
-    cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/
 }
 
-HTOPTHEMEADM() {
-    cp /home/$MYUSER/.config/htop/htoprc /etc/skel/.config/htop/
+BUPETCSKEL3064() {
+	echo "#Backing up /etc/skel files..."
+        sleep 2
+	mkdir -p /etc/skel/.llupgradebackup/3.0
+        cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.0
+        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0
+
 }
 
-# Backup /etc/skel/
-BUPETCSKEL() {
-    echo "#• Backing up /etc/skel files..." 
-    sleep 2
-	chmod 755 /etc/skel/.config/htop/
-	chmod 755 /etc/skel/.config/lxterminal/
-    cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0
+# Backup /etc/skel/ Linux Lite 3.2
+BUPETCSKEL32() {
+       echo "#Backing up /etc/skel files..." 
+        sleep 2
+	mkdir -p /etc/skel/.llupgradebackup/3.2
+        cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2
+        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2
+        cp /etc/skel/.conky/widget /etc/skel/.llupgradebackup/3.2
+
 }
 
-BUPETCSKEL64() {
-	echo "#• Backing up /etc/skel files..."
-    sleep 2
-	chmod 755 /etc/skel/.config/lxterminal/
-    cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0
+BUPETCSKEL3264() {
+	echo "#Backing up /etc/skel files..."
+        sleep 2
+	mkdir -p /etc/skel/.llupgradebackup/3.2
+        cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2
+        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2
+        cp /etc/skel/.conky/widget /etc/skel/.llupgradebackup/3.2
+
 }
 
 # Get list of available updated packages
 UPD1() {
 #sed 's/^\(.\{128\}\).*/\1/' Display only the first 128 characters
-UPDATER=$( stdbuf -oL /bin/bash \-c '(apt-get update \-y )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo apt-get update \-y )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --window-icon="$run_icon" --no-cancel --percentage="$PERCENTAGE"  --title="Updating package information..." --width=600 --auto-close )
+zenity --progress --percentage="$PERCENTAGE"  --title="Updating package information..." \
+--width=600 --auto-close )
             if [ $? = 1 ]; then
                 zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
             fi    
@@ -137,9 +175,10 @@ unset UPDATER
 
 # Erase existing available info
 ERASEDPKG() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(dpkg --clear-avail )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo dpkg --clear-avail )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --window-icon="$run_icon" --no-cancel --percentage="$PERCENTAGE"  --title="Clearing dpkg..." --width=600 --auto-close )
+zenity --progress --percentage="$PERCENTAGE"  --title="Clearing dpkg..." \
+--width=600 --auto-close )
             if [ $? = 1 ]; then
                 zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
             fi    
@@ -148,33 +187,37 @@ unset UPDATER
 
 # Install new packages, remove obsolete packages, clean up - 32BIT
 INPKCL() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all \-y && apt-get update \-y &&  apt-get autoremove \-y &&  apt-get clean )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify \-y && sudo apt-get update \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --window-icon="$run_icon" --no-cancel --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." --width=600 --auto-close )
+zenity --progress --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
+--width=600 --auto-close )
 unset UPDATER
 }
 
 # Install new packages, remove obsolete packages, clean up - 64BIT
 INPKCL64() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '( DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y &&  apt-get install libreoffice-gnome linux-generic conky-all \-y &&  apt-get update \-y &&  apt-get autoremove \-y &&  apt-get clean )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify \-y && sudo apt-get update \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --window-icon="$run_icon" --no-cancel --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." --width=600 --auto-close )
+zenity --progress --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
+--width=600 --auto-close )
 unset UPDATER
 }
 
 # Add new wallpapers
 ADDWALL1() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/walls32.tar.gz &&  tar -xvf walls32.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ &&  chown root:root *.jpg &&  chown root:root *.png &&  chmod 644 *.jpg &&  chmod 644 *.jpeg &&  chmod 644 *.png && sleep 2 )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/walls32.tar.gz && sudo tar -xvf walls32.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && sudo chown root:root *.jpg && sudo chown root:root *.png && sudo chmod 644 *.jpg && sudo chmod 644 *.jpeg && sudo chmod 644 *.png && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --window-icon="$run_icon" --no-cancel --percentage="$PERCENTAGE"  --title="Adding new wallapapers..." --width=600 --auto-close )
+zenity --progress --percentage="$PERCENTAGE"  --title="Adding new wallapapers..." \
+--width=600 --auto-close )
 unset UPDATER
 }
 
 # Update lsb_release and issue files /etc changes, update /etc/llver
 UPLSBISSUE() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite 3.2\"/g" /etc/lsb-release && echo "Linux Lite 3.2" |  tee /etc/llver && echo "Linux Lite 3.2 LTS \n \l" |  tee /etc/issue && sleep 2 )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite 3.4\"/g" /etc/lsb-release && echo "Linux Lite 3.4" | sudo tee /etc/llver && echo "Linux Lite 3.4 LTS \n \l" | sudo tee /etc/issue && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --window-icon="$run_icon" --no-cancel --percentage="$PERCENTAGE"  --title="Updating version information..." --width=600 --auto-close )
+zenity --progress --percentage="$PERCENTAGE"  --title="Updating version information..." \
+--width=600 --auto-close )
             if [ $? = 1 ]; then
                 zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
             fi    
@@ -183,9 +226,10 @@ unset UPDATER
 
 # Update grub
 UPGRUB() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '( update-grub && sleep 2 )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo update-grub && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --window-icon="$run_icon" --no-cancel --percentage="$PERCENTAGE"  --title="Updating Grub..." --width=600 --auto-close )
+zenity --progress --percentage="$PERCENTAGE"  --title="Updating Grub..." \
+--width=600 --auto-close )
             if [ $? = 1 ]; then
                 zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
             fi    
@@ -194,9 +238,10 @@ unset UPDATER
 
 # /lib/plymouth/themes/ubuntu-text/ changes
 LBPLYUB() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/^title=Linux Lite.*$/title=Linux Lite 3.2/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth &&  sed -i "s/^title=Ubuntu.*$/title=Linux Lite 3.2/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth &&  sed -i "s/black=0x2c001e/black=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth &&  sed -i "s/white=0xffffff/white=0xffffff/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth &&  sed -i "s/brown=0xff4012/brown=0xffff00/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth &&  sed -i "s/blue=0x988592/blue=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth &&  update-initramfs -u )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/^title=Linux Lite.*$/title=Linux Lite 3.4/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/^title=Ubuntu.*$/title=Linux Lite 3.4/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/black=0x2c001e/black=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/white=0xffffff/white=0xffffff/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/brown=0xff4012/brown=0xffff00/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/blue=0x988592/blue=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo update-initramfs -u )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --window-icon="$run_icon" --no-cancel --percentage="$PERCENTAGE"  --title="Updating boot configuration please wait..." --width=600 --auto-close )
+zenity --progress --percentage="$PERCENTAGE"  --title="Updating boot configuration please wait..." \
+--width=600 --auto-close )
             if [ $? = 1 ]; then
                 zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
             fi    
@@ -205,14 +250,27 @@ unset UPDATER
 
 # Modify root's Terminal theme
 ROOTTERTHEM() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '( mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup &&  cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/ &&  chown root:root /root/.config/lxterminal/lxterminal.conf && sleep 2 )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup && sudo cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/ && sudo chown root:root /root/.config/lxterminal/lxterminal.conf && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --window-icon="$run_icon" --no-cancel --percentage="$PERCENTAGE"  --title="Setting roots Terminal theme..." \
+zenity --progress --percentage="$PERCENTAGE"  --title="Setting roots Terminal theme..." \
 --width=600 --auto-close )
             if [ $? = 1 ]; then
                 zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
             fi    
 unset UPDATER
+}
+
+# Improvements to the Lite Desktop Widget
+UPDCONKSKEL() {
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$USER"/g /etc/skel/.conky/widget && sleep 2 )' 2>&1 |
+stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+zenity --progress --percentage="$PERCENTAGE"  --title="Updating the Lite Desktop Widget in skel..." \
+--width=600 --auto-close )
+            if [ $? = 1 ]; then
+                zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
+            fi    
+unset UPDATER
+return
 }
 
 #Check the version and start  the appropriate function
@@ -221,14 +279,13 @@ LLVER=$(awk '{print $3}' /etc/llver)
 if [ "$LLVER" == "3.0" ]; then
     LL30SYSTEM
 elif [ "$LLVER" == "3.2" ]; then
-#    LL32SYSTEM
-#elif [ "$LLVER" == "3.4" ]; then
- #   LL34SYSTEM
-#elif [ "$LLVER" == "3.6" ]; then
-#    LL36SYSTEM
-#elif [ "$LLVER" == "3.8" ]; then
-    zenity --info  --title="    Lite Upgrade Info" --width=260 --height=60 --icon-name=info \
-	   --text="\nYou are already running the latest release."
+    LL32SYSTEM
+elif [ "$LLVER" == "3.4" ]; then
+   LL34SYSTEM
+elif [ "$LLVER" == "3.6" ]; then
+    LL36SYSTEM
+elif [ "$LLVER" == "3.8" ]; then
+    zenity --info --text="You are already running the latest release"
     exit 0
 fi
 
@@ -247,7 +304,7 @@ if [ ${#ARRAYB[@]} -ne 0 ]; then
         do
             $line     # Execute functions one by one
             if [ $? = 1 ]; then
-                zenity --error --title="Lite Upgrade" --text="\nAn error occurred while performing upgrades:\n ${line}"
+                zenity --error --title="Lite Upgrade" --text="There was an error while performing upgrades:\n ${line}"
                 exit 1
             fi    
         let i++
@@ -259,7 +316,7 @@ if [ ${#ARRAYB[@]} -ne 0 ]; then
             sleep 2
         fi
     
-    done| zenity --progress --width=300 --window-icon="$run_icon" --no-cancel --title="  Lite Upgrade" --auto-kill --auto-close
+    done| zenity --progress  --title="Lite Upgrade" --auto-kill --auto-close --width=300
 fi
 
 # Check if ARRAYC is empty
@@ -292,4 +349,4 @@ fi
 
 unset ARAYB
 unset ARAYC
-unset MYUSER
+unset _USER
