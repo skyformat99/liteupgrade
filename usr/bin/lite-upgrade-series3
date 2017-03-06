@@ -99,8 +99,6 @@ unset UPDATER
 # Improvements to the Lite Desktop Widget
 UPDCONKY() {
 UPDATER=$( stdbuf -oL /bin/bash \-c '(sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$USER"/g ~/.conky/widget && sleep 2 )' 2>&1 |
-#UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite 3.4\"/g" /etc/lsb-release && echo "Linux Lite 3.4" |
-#UPDATER=$( stdbuf -oL /bin/bash \-c '(cd ~/ && sed -i '/Logged in as.*/c\${color}Logged in as:   ${alignr}${color}$USER' ~/.conky/widget && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Updating the Lite Desktop Widget..." \
 --width=600 --auto-close )
