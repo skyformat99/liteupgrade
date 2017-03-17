@@ -207,7 +207,7 @@ unset UPDATER
 
 # Add new wallpapers
 ADDWALL1() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/walls32.tar.gz && sudo tar -xvf walls32.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && sudo chown root:root *.jpg && sudo chown root:root *.png && sudo chmod 644 *.jpg && sudo chmod 644 *.jpeg && sudo chmod 644 *.png && sleep 2 )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.4/walls34.tar.gz && sudo tar -xvf walls34.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && sudo chown root:root *.jpg && sudo chown root:root *.png && sudo chmod 644 *.jpg && sudo chmod 644 *.jpeg && sudo chmod 644 *.png && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Adding new wallapapers..." \
 --width=600 --auto-close )
