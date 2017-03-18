@@ -99,8 +99,6 @@ unset UPDATER
 # Improvements to the Lite Desktop Widget
 UPDCONKY() {
 UPDATER=$( stdbuf -oL /bin/bash \-c '(sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$USER"/g ~/.conky/widget && sleep 2 )' 2>&1 |
-#UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite 3.4\"/g" /etc/lsb-release && echo "Linux Lite 3.4" |
-#UPDATER=$( stdbuf -oL /bin/bash \-c '(cd ~/ && sed -i '/Logged in as.*/c\${color}Logged in as:   ${alignr}${color}$USER' ~/.conky/widget && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Updating the Lite Desktop Widget..." \
 --width=600 --auto-close )
@@ -124,6 +122,20 @@ zenity --progress --percentage="$PERCENTAGE"  --title="Adding Execute bash scrip
                     sleep 2
                                         zenity --error \
                                         --title="Error" --text='There was an error while adding the\nExecute bash scripts feature!'
+             fi
+unset UPDATER
+}
+
+# Window snapping & tiling
+WINSNAP() {
+UPDATER=$( xfconf-query -c xfwm4 -p /general/tile_on_move -s true && xfconf-query -c xfwm4 -p /general/snap_resist -s true && xfconf-query -c xfwm4 -p /general/wrap_windows -s false && sleep 2 |
+zenity --progress --percentage=20  --title="Setting Window snapping feature..." \
+--width=600 --auto-close)
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text='There was an error while setting\nthe Window snapping feature'
              fi
 unset UPDATER
 }
@@ -272,8 +284,8 @@ case "$arch" in
     ARRAYA+=('MKDIRBUPS30')
     ARRAYA+=('BUPHOMEUSER30')
     ARRAYA+=('ADDCONKY')
-    ARRAYA+=('UPDCONKY')
     ARRAYA+=('EXEBASHSCR')
+    ARRAYA+=('WINSNAP')
     ARRAYA+=('TERMTHEME')
     ARRAYA+=('LITEWELCOME')
     ARRAYA+=('HTOPTHEME')
@@ -282,8 +294,8 @@ case "$arch" in
     ARRAYA+=('MKDIRBUPS30')
     ARRAYA+=('BUPHOMEUSER30')
     ARRAYA+=('ADDCONKY')
-    ARRAYA+=('UPDCONKY')
     ARRAYA+=('EXEBASHSCR')
+    ARRAYA+=('WINSNAP')
     ARRAYA+=('TERMTHEME')
     ARRAYA+=('LITEWELCOME')
     ARRAYA+=('HTOPTHEME')
@@ -313,6 +325,7 @@ case "$arch" in
     ARRAYA+=('BUPHOMEUSER32')
     ARRAYA+=('UPDCONKY')
     ARRAYA+=('EXEBASHSCR')
+    ARRAYA+=('WINSNAP')
     ARRAYA+=('LITEWELCOME')
     ;;
     amd64)
@@ -320,6 +333,7 @@ case "$arch" in
     ARRAYA+=('BUPHOMEUSER32')
     ARRAYA+=('UPDCONKY')
     ARRAYA+=('EXEBASHSCR')
+    ARRAYA+=('WINSNAP')
     ARRAYA+=('LITEWELCOME')
     ;;
 esac

@@ -60,6 +60,7 @@ case "$arch" in
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
     ARRAYC+=('ROOTTERTHEM')
+    ARRAYC+=('GETCONKY')
     ARRAYC+=('UPDCONKSKEL')
     ;;
     amd64)
@@ -72,6 +73,7 @@ case "$arch" in
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
     ARRAYC+=('ROOTTERTHEM')
+    ARRAYC+=('GETCONKY')
     ARRAYC+=('UPDCONKSKEL')
     ;;
 esac
@@ -205,7 +207,7 @@ unset UPDATER
 
 # Add new wallpapers
 ADDWALL1() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/walls32.tar.gz && sudo tar -xvf walls32.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && sudo chown root:root *.jpg && sudo chown root:root *.png && sudo chmod 644 *.jpg && sudo chmod 644 *.jpeg && sudo chmod 644 *.png && sleep 2 )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.4/walls34.tar.gz && sudo tar -xvf walls34.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && sudo chown root:root *.jpg && sudo chown root:root *.png && sudo chmod 644 *.jpg && sudo chmod 644 *.jpeg && sudo chmod 644 *.png && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Adding new wallapapers..." \
 --width=600 --auto-close )
@@ -257,6 +259,15 @@ zenity --progress --percentage="$PERCENTAGE"  --title="Setting roots Terminal th
             if [ $? = 1 ]; then
                 zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
             fi    
+unset UPDATER
+}
+
+# Get Conky for Linux Lite 3.0 add it to /etc/skel
+GETCONKY() {
+UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /etc/skel && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz && sudo chown root:root .conky && sleep 2 )' 2>&1 |
+stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+zenity --progress --percentage="$PERCENTAGE"  --title="Adding Lite Widget to /etc/skel..." \
+--width=600 --auto-close )
 unset UPDATER
 }
 
