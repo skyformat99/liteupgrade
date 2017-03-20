@@ -1,9 +1,9 @@
 Package: lite-upgrade-series3
-Version: 2.0-0050-linuxlite
+Version: 2.0-0060-linuxlite
 Essential: yes
 Section: base
 Priority: required
-Installed-Size: 25
+Installed-Size: 33
 Depends: apt, zenity, gksu
 Homepage: http://www.linuxliteos.com
 Maintainer: Jerry Bezencon<valtam@linuxliteos.com>
