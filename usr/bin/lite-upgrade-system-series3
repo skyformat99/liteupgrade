@@ -189,7 +189,7 @@ unset UPDATER
 
 # Install new packages, remove obsolete packages, clean up - 32BIT
 INPKCL() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify \-y && sudo apt-get update \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify flashplugin-installer \-y && sudo apt-get update \-y && sudo apt-get remove adobe-flashplugin \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
 --width=600 --auto-close )
@@ -198,7 +198,7 @@ unset UPDATER
 
 # Install new packages, remove obsolete packages, clean up - 64BIT
 INPKCL64() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify \-y && sudo apt-get update \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify flashplugin-installer \-y && sudo apt-get update \-y && sudo apt-get remove adobe-flashplugin \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
 --width=600 --auto-close )

@@ -31,8 +31,6 @@ MKDIRBUPS30() {
                         fi
 }
 
-# Copy all original files from /home/user and /etc/skel to their respective backup folders and versions
-
 # Backup /home/$USER/ select config files on Linux Lite 3.0
 BUPHOMEUSER30() {
     echo "#Backing up select home files..."
@@ -61,8 +59,6 @@ MKDIRBUPS32() {
                     exit 1
                         fi
 }
-
-# Copy all original files from /home/user and /etc/skel to their respective backup folders and versions
 
 # Backup /home/$USER/ select config files on Linux Lite 3.2
 BUPHOMEUSER32() {
