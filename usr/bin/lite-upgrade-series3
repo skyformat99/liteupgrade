@@ -149,7 +149,6 @@ unset UPDATER
 TERMTHEME() {
     echo "#Updating to new Terminal theme..."
         mv /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.config/lxterminal/lxterminal.conf.backup
-        mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup
         touch /home/$USER/.config/lxterminal/lxterminal.conf
         echo "[general]" >> /home/$USER/.config/lxterminal/lxterminal.conf
         echo "fontname=Monospace 10" >> /home/$USER/.config/lxterminal/lxterminal.conf
@@ -168,7 +167,6 @@ TERMTHEME() {
         echo "hideclosebutton=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
         echo "disablef10=true" >> /home/$USER/.config/lxterminal/lxterminal.conf
         echo "disablealt=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
-        cp /home/$USER/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/
         sleep 2
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                         echo "#Error"
@@ -331,6 +329,7 @@ case "$arch" in
     ARRAYA+=('UPDCONKY')
     ARRAYA+=('EXEBASHSCR')
     ARRAYA+=('WINSNAP')
+    ARRAYA+=('TERMTHEME')
     ARRAYA+=('LITEWELCOME')
     ;;
     amd64)
@@ -339,6 +338,7 @@ case "$arch" in
     ARRAYA+=('UPDCONKY')
     ARRAYA+=('EXEBASHSCR')
     ARRAYA+=('WINSNAP')
+    ARRAYA+=('TERMTHEME')
     ARRAYA+=('LITEWELCOME')
     ;;
 esac
