@@ -14,6 +14,15 @@ export LANG=C
 # Linux Lite default dialog icon
 ic="/usr/share/icons/zenity-llcc.png"
 
+# Check Internet access
+if eval "curl -sk google.com" >> /dev/null 2>&1; then
+  :  # continue - internet connection check passed
+else # Prompt ERROR internet connection check failed and exit
+    (zenity --info --width=320 --height=120 --ok-label="Got it!" --title="  Lite Updates - No Internet connection detected..." \
+            --text="\n<b>Your computer does not seem to be connected to the internet</b> \n \nLinux Lite cannot check for updates. \nPlease check your Internet connection and try again." --no-wrap)
+        exit 0
+fi
+
 # Set functions for non-root execution
 # The ones that need root go to the other file: lite-upgrade-system-series3
 
