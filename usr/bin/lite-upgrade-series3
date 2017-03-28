@@ -14,6 +14,15 @@ export LANG=C
 # Linux Lite default dialog icon
 ic="/usr/share/icons/zenity-llcc.png"
 
+# Check Internet access
+if eval "curl -sk google.com" >> /dev/null 2>&1; then
+  :  # continue - internet connection check passed
+else # Prompt ERROR internet connection check failed and exit
+    (zenity --info --width=320 --height=120 --ok-label="Got it!" --title="  Lite Upgrade - No Internet connection detected..." \
+            --text="\n<b>Your computer does not seem to be connected to the internet</b> \n \nLinux Lite cannot continue with Lite Upgrade. \nPlease check your Internet connection and try again." --no-wrap)
+        exit 0
+fi
+
 # Set functions for non-root execution
 # The ones that need root go to the other file: lite-upgrade-system-series3
 
@@ -30,8 +39,6 @@ MKDIRBUPS30() {
                     exit 1
                         fi
 }
-
-# Copy all original files from /home/user and /etc/skel to their respective backup folders and versions
 
 # Backup /home/$USER/ select config files on Linux Lite 3.0
 BUPHOMEUSER30() {
@@ -61,8 +68,6 @@ MKDIRBUPS32() {
                     exit 1
                         fi
 }
-
-# Copy all original files from /home/user and /etc/skel to their respective backup folders and versions
 
 # Backup /home/$USER/ select config files on Linux Lite 3.2
 BUPHOMEUSER32() {
@@ -144,7 +149,6 @@ unset UPDATER
 TERMTHEME() {
     echo "#Updating to new Terminal theme..."
         mv /home/$USER/.config/lxterminal/lxterminal.conf /home/$USER/.config/lxterminal/lxterminal.conf.backup
-        mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup
         touch /home/$USER/.config/lxterminal/lxterminal.conf
         echo "[general]" >> /home/$USER/.config/lxterminal/lxterminal.conf
         echo "fontname=Monospace 10" >> /home/$USER/.config/lxterminal/lxterminal.conf
@@ -163,7 +167,6 @@ TERMTHEME() {
         echo "hideclosebutton=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
         echo "disablef10=true" >> /home/$USER/.config/lxterminal/lxterminal.conf
         echo "disablealt=false" >> /home/$USER/.config/lxterminal/lxterminal.conf
-        cp /home/$USER/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/
         sleep 2
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                         echo "#Error"
@@ -326,6 +329,7 @@ case "$arch" in
     ARRAYA+=('UPDCONKY')
     ARRAYA+=('EXEBASHSCR')
     ARRAYA+=('WINSNAP')
+    ARRAYA+=('TERMTHEME')
     ARRAYA+=('LITEWELCOME')
     ;;
     amd64)
@@ -334,6 +338,7 @@ case "$arch" in
     ARRAYA+=('UPDCONKY')
     ARRAYA+=('EXEBASHSCR')
     ARRAYA+=('WINSNAP')
+    ARRAYA+=('TERMTHEME')
     ARRAYA+=('LITEWELCOME')
     ;;
 esac
