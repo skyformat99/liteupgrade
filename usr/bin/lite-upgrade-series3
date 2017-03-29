@@ -214,7 +214,6 @@ HTOPTHEME() {
         echo "left_meter_modes=1 1 1" >> /home/$USER/.config/htop/htoprc
         echo "right_meters=RightCPUs2 Tasks LoadAverage Uptime" >> /home/$USER/.config/htop/htoprc
         echo "right_meter_modes=1 2 2 2" >> /home/$USER/.config/htop/htoprc
-        cp /home/$USER/.config/htop/htoprc /etc/skel/.config/htop/
         sleep 2
             if [ "${PIPESTATUS[0]}" -ne "0" ]; then
                         echo "#Error"
