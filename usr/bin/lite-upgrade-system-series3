@@ -26,9 +26,6 @@ else
    killall -9 gdebi-gtk
 fi
 
-# Upgrade will not install all packages if /var/lib/dpkg/lock file exists
-test -e ["/var/lib/dpkg/lock"] || rm -rf /var/lib/dpkg/lock
-
 # Linux Lite default dialog icon
 ic="/usr/share/icons/zenity-llcc.png"
 
