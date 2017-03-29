@@ -177,18 +177,13 @@ TERMTHEME() {
 }
 
 # Set lite-welcome to autostart on first boot
-# Executes at the end because the package lite-welcome needs to be installed first
 LITEWELCOME() {
-UPDATER=$( ln -s /usr/share/applications/lite_welcome.desktop /home/$USER/.config/autostart && sleep 2 |
-zenity --progress --percentage=20  --title="Setting Lite Welcome to autostart..." \
---width=600 --auto-close)
-            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text='There was an error while setting\nLite Welcome to autostart on first boot!\n\n(You may already have it enabled)'
-             fi
-unset UPDATER
+if [ ! -f /home/$USER/.config/autostart/lite_welcome.desktop ]; then
+  UPDATER=$( ln -s /usr/share/applications/lite_welcome.desktop /home/$USER/.config/autostart && sleep 2 |
+  zenity --progress --percentage=20  --title="Setting Lite Welcome to autostart..." \
+         --width=600 --auto-close)
+   unset UPDATER
+else :; fi 
 }
 
 # Change to new HTOP theme, file is: /home/$USER/.config/htop/htoprc
