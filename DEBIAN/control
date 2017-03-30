@@ -3,7 +3,7 @@ Version: 2.0-0060-linuxlite
 Essential: yes
 Section: base
 Priority: required
-Installed-Size: 36.9
+Installed-Size: 38.8
 Depends: apt, zenity, gksu
 Homepage: http://www.linuxliteos.com
 Maintainer: Jerry Bezencon<valtam@linuxliteos.com>
