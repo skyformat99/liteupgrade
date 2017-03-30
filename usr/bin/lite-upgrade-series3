@@ -219,7 +219,7 @@ HTOPTHEME() {
                         echo "#Error"
                     sleep 2
                                         zenity --error \
-                                        --title="Error" --text="There was an error while\nChanging the Terminal theme!"
+                                        --title="Error" --text="There was an error while\nChanging the Resource Usage theme!"
                         fi
 }
 
