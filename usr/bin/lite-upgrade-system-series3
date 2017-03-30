@@ -59,6 +59,7 @@ case "$arch" in
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
+    ARRAYC+=('NOTIFYCHSKEL')
     ARRAYC+=('HTOPSKEL')
     ARRAYC+=('ALLTERTHEM')
     ARRAYC+=('GETCONKY')
@@ -73,6 +74,7 @@ case "$arch" in
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
+    ARRAYC+=('NOTIFYCHSKEL')
     ARRAYC+=('HTOPSKEL')
     ARRAYC+=('ALLTERTHEM')
     ARRAYC+=('GETCONKY')
@@ -108,6 +110,7 @@ case "$arch" in
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
+    ARRAYC+=('NOTIFYCHSKEL')
     ARRAYC+=('ALLTERTHEM')
     ARRAYC+=('UPDCONKSKEL')
     ;;
@@ -120,6 +123,7 @@ case "$arch" in
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPGRUB')
     ARRAYC+=('LBPLYUB')
+    ARRAYC+=('NOTIFYCHSKEL')
     ARRAYC+=('ALLTERTHEM')
     ARRAYC+=('UPDCONKSKEL')
     ;;
@@ -252,6 +256,22 @@ zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Updating boot
                 zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
             fi    
 unset UPDATER
+}
+
+# Change Notification theme
+NOTIFYCHSKEL() {
+    echo "#Updating to new Notification theme..."
+        cp /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup
+        sed -i '5d' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml
+        sed -i '5i\ \ <property name="theme" type="string" value="Default"/>' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml
+
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nChanging the Notification theme!"
+                        fi
 }
 
 # Change to new HTOP theme, file is: /etc/skel/.config/htop/htoprc

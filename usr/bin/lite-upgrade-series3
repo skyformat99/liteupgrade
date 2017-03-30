@@ -131,6 +131,22 @@ zenity --progress --percentage="$PERCENTAGE"  --title="Adding Execute bash scrip
 unset UPDATER
 }
 
+# Change Notification theme
+NOTIFYCH() {
+    echo "#Updating to new Notification theme..."
+        cp /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup
+        sed -i '5d' /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml
+        sed -i '5i\ \ <property name="theme" type="string" value="Default"/>' /home/$USER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml
+
+        sleep 2
+            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+                        echo "#Error"
+                    sleep 2
+                                        zenity --error \
+                                        --title="Error" --text="There was an error while\nChanging the Notification theme!"
+                        fi
+}
+
 # Window snapping & tiling
 WINSNAP() {
 UPDATER=$( xfconf-query -c xfwm4 -p /general/tile_on_move -s true && xfconf-query -c xfwm4 -p /general/snap_resist -s true && xfconf-query -c xfwm4 -p /general/wrap_windows -s false && sleep 2 |
@@ -282,6 +298,7 @@ case "$arch" in
     ARRAYA+=('BUPHOMEUSER30')
     ARRAYA+=('ADDCONKY')
     ARRAYA+=('EXEBASHSCR')
+    ARRAYA+=('NOTIFYCH')
     ARRAYA+=('WINSNAP')
     ARRAYA+=('TERMTHEME')
     ARRAYA+=('LITEWELCOME')
@@ -292,6 +309,7 @@ case "$arch" in
     ARRAYA+=('BUPHOMEUSER30')
     ARRAYA+=('ADDCONKY')
     ARRAYA+=('EXEBASHSCR')
+    ARRAYA+=('NOTIFYCH')
     ARRAYA+=('WINSNAP')
     ARRAYA+=('TERMTHEME')
     ARRAYA+=('LITEWELCOME')
@@ -322,6 +340,7 @@ case "$arch" in
     ARRAYA+=('BUPHOMEUSER32')
     ARRAYA+=('UPDCONKY')
     ARRAYA+=('EXEBASHSCR')
+    ARRAYA+=('NOTIFYCH')
     ARRAYA+=('WINSNAP')
     ARRAYA+=('TERMTHEME')
     ARRAYA+=('LITEWELCOME')
@@ -331,6 +350,7 @@ case "$arch" in
     ARRAYA+=('BUPHOMEUSER32')
     ARRAYA+=('UPDCONKY')
     ARRAYA+=('EXEBASHSCR')
+    ARRAYA+=('NOTIFYCH')
     ARRAYA+=('WINSNAP')
     ARRAYA+=('TERMTHEME')
     ARRAYA+=('LITEWELCOME')
