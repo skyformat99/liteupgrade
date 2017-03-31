@@ -156,7 +156,6 @@ BUPETCSKEL32() {
 	mkdir -p /etc/skel/.llupgradebackup/3.2
         cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2
         cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2
-        cp /etc/skel/.conky/widget /etc/skel/.llupgradebackup/3.2
 
 }
 
@@ -166,7 +165,6 @@ BUPETCSKEL3264() {
 	mkdir -p /etc/skel/.llupgradebackup/3.2
         cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2
         cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2
-        cp /etc/skel/.conky/widget /etc/skel/.llupgradebackup/3.2
 
 }
 
