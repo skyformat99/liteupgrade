@@ -3,7 +3,7 @@
 # Description: Linux Lite Upgrade Script - Home
 # About: For Linux Lite 3.- Series only
 # Licence: GPLv2 Sharing is Caring
-# Author: Jerry Bezencon
+# Author: Jerry Bezencon, Ralphy
 # Credits: Misko_2083
 # Website: https://www.linuxliteos.com
 #----------------------------------------------------------------
@@ -12,25 +12,11 @@
 export LANG=C
 
 # Kill off any package managers that may be running
-if [ "$(pidof synaptic)" ] 
-then
-   sudo killall -9 synaptic 
-else
-   echo""
-fi
+if [ "$(pidof synaptic)" ]; then killall -9 synaptic; else :; fi
+if [ -z "$(pgrep gdebi-gtk)" ]; then :; else killall -9 gdebi-gtk; fi
 
-if [ -z "$(pgrep gdebi-gtk)" ]
-then
-   echo ""
-else
-   killall -9 gdebi-gtk
-fi
-
-# Linux Lite default dialog icon
-ic="/usr/share/icons/zenity-llcc.png"
-
-# Get username
-_USER="$@"
+# Keep it clean to reduce errors
+apt-get clean all 2>&1 | tee -a $LOGFILE
 
 LL30SYSTEM() {
 # Invoke arrays
@@ -132,235 +118,207 @@ esac
 
 # Backup /etc/skel/ Linux Lite 3.0
 BUPETCSKEL30() {
-       echo "#Backing up /etc/skel files..." 
-        sleep 2
-	mkdir -p /etc/skel/.llupgradebackup/3.0
-        cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.0
-        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0
-
+  log_upgrade "BUPETCSKEL30"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+    mkdir -p /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
 }
 
 BUPETCSKEL3064() {
-	echo "#Backing up /etc/skel files..."
-        sleep 2
-	mkdir -p /etc/skel/.llupgradebackup/3.0
-        cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.0
-        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0
-
+  log_upgrade "BUPETCSKEL3064"
+    echo "#⚫ Backing up /etc/skel files..." && sleep 2
+    mkdir -p /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
 }
 
 # Backup /etc/skel/ Linux Lite 3.2
 BUPETCSKEL32() {
-       echo "#Backing up /etc/skel files..." 
-        sleep 2
-	mkdir -p /etc/skel/.llupgradebackup/3.2
-        cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2
-        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2
-
+  log_upgrade "BUPETCSKEL32"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+    mkdir -p /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
 }
 
 BUPETCSKEL3264() {
-	echo "#Backing up /etc/skel files..."
-        sleep 2
-	mkdir -p /etc/skel/.llupgradebackup/3.2
-        cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2
-        cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2
-
+  log_upgrade "BUPETCSKEL3264"
+    echo "#⚫ Backing up /etc/skel files..." && sleep 2
+    mkdir -p /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
 }
 
 # Get list of available updated packages
 UPD1() {
-#sed 's/^\(.\{128\}\).*/\1/' Display only the first 128 characters
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo apt-get update \-y )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Updating package information..." \
---width=600 --auto-close )
-            if [ $? = 1 ]; then
-                zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
-            fi    
+  log_upgrade "UPD1"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( apt-get update \-y )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="$APPNAME" --text="Updating package information...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
 # Erase existing available info
 ERASEDPKG() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo dpkg --clear-avail )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Clearing dpkg..." \
---width=600 --auto-close )
-            if [ $? = 1 ]; then
-                zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
-            fi    
+  log_upgrade "ERASEDPKG"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( dpkg --clear-avail )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Clearing dpkg...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
 # Install new packages, remove obsolete packages, clean up - 32BIT
 INPKCL() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify flashplugin-installer \-y && sudo apt-get update \-y && sudo apt-get remove adobe-flashplugin \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
---width=600 --auto-close )
+  log_upgrade "INPKCL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Downloading and Installing new packages...")
 unset UPDATER
 }
 
 # Install new packages, remove obsolete packages, clean up - 64BIT
 INPKCL64() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && sudo apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify flashplugin-installer \-y && sudo apt-get update \-y && sudo apt-get remove adobe-flashplugin \-y && sudo apt-get autoremove \-y && sudo apt-get clean )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." \
---width=600 --auto-close )
+  log_upgrade "INPKCL64"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Downloading and Installing new packages...")
 unset UPDATER
 }
 
 # Add new wallpapers
 ADDWALL1() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.4/walls34.tar.gz && sudo tar -xvf walls34.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && sudo chown root:root *.jpg && sudo chown root:root *.png && sudo chmod 644 *.jpg && sudo chmod 644 *.jpeg && sudo chmod 644 *.png && sleep 2 )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Adding new wallapapers..." \
---width=600 --auto-close )
+  log_upgrade "ADDWALL1"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.4/walls34.tar.gz &&  tar -xvf walls34.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && chown root:root * && chmod 644 * && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Adding new wallapapers...")
 unset UPDATER
 }
 
 # Update lsb_release and issue files /etc changes, update /etc/llver
 UPLSBISSUE() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite 3.4\"/g" /etc/lsb-release && echo "Linux Lite 3.4" | sudo tee /etc/llver && echo "Linux Lite 3.4 LTS \n \l" | sudo tee /etc/issue && sleep 2 )' 2>&1 |
-stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Updating version information..." \
---width=600 --auto-close )
-            if [ $? = 1 ]; then
-                zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
-            fi    
+  log_upgrade "UPLSBISSUE"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite "'$UPGR'"\"/g" /etc/lsb-release && echo "Linux Lite $UPGR" | tee /etc/llver && echo "Linux Lite $UPGR LTS \n \l" | tee /etc/issue && sleep 2 )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Updating version information...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
 # Update grub
 UPGRUB() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo update-grub && sleep 2 )' 2>&1 |
-stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Updating Grub..." \
---width=600 --auto-close )
-            if [ $? = 1 ]; then
-                zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
-            fi    
+  log_upgrade "UPGRUB"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( update-grub && sleep 2 )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="$APPNAME" --text="Updating grub...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
 # /lib/plymouth/themes/ubuntu-text/ changes
 LBPLYUB() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/^title=Linux Lite.*$/title=Linux Lite 3.4/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/^title=Ubuntu.*$/title=Linux Lite 3.4/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/black=0x2c001e/black=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/white=0xffffff/white=0xffffff/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/brown=0xff4012/brown=0xffff00/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo sed -i "s/blue=0x988592/blue=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && sudo update-initramfs -u && sleep 2 )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Updating boot configuration please wait..." \
---width=600 --auto-close )
-            if [ $? = 1 ]; then
-                zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
-            fi    
+  log_upgrade "LBPLYUB"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/^title=Linux Lite.*$/title=Linux Lite "'$UPGR'"/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/^title=Ubuntu.*$/title=Linux Lite "'$UPGR'"/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/black=0x2c001e/black=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/white=0xffffff/white=0xffffff/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/brown=0xff4012/brown=0xffff00/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/blue=0x988592/blue=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && update-initramfs -u && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Updating boot configuration please wait...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
 # Change Notification theme
 NOTIFYCHSKEL() {
-    echo "#Updating to new Notification theme..."
-        cp /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup
-        sed -i '5d' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml
-        sed -i '5i\ \ <property name="theme" type="string" value="Default"/>' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml
-
-        sleep 2
-            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text="There was an error while\nChanging the Notification theme!"
-                        fi
+  log_upgrade "NOTIFYCHSKEL"
+  echo "#⚫ Updating to new Notification theme..."
+  cp /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup 2>&1 | tee -a $LOGFILE
+  sed -i '5d' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml 2>&1 | tee -a $LOGFILE
+  sed -i '5i\ \ <property name="theme" type="string" value="Default"/>' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml 2>&1 | tee -a $LOGFILE
+  sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "NOTIFYCHSKEL - Error"
+    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Notification theme.\n\n$REPORTERROR"
+  fi
 }
 
 # Change to new HTOP theme, file is: /etc/skel/.config/htop/htoprc
 HTOPSKEL() {
-    echo "#Updating to new Resource Usage theme..."
-        touch /etc/skel/.config/htop/htoprc
-        echo "fields=0 48 17 18 38 39 40 2 46 47 49 1" >> /etc/skel/.config/htop/htoprc
-        echo "sort_key=46" >> /etc/skel/.config/htop/htoprc
-        echo "sort_direction=1" >> /etc/skel/.config/htop/htoprc
-        echo "hide_threads=0" >> /etc/skel/.config/htop/htoprc
-        echo "hide_kernel_threads=1" >> /etc/skel/.config/htop/htoprc
-        echo "hide_userland_threads=0" >> /etc/skel/.config/htop/htoprc
-        echo "shadow_other_users=0" >> /etc/skel/.config/htop/htoprc
-        echo "show_thread_names=0" >> /etc/skel/.config/htop/htoprc
-        echo "show_program_path=1" >> /etc/skel/.config/htop/htoprc
-        echo "highlight_base_name=0" >> /etc/skel/.config/htop/htoprc
-        echo "highlight_megabytes=1" >> /etc/skel/.config/htop/htoprc
-        echo "highlight_threads=1" >> /etc/skel/.config/htop/htoprc
-        echo "tree_view=0" >> /etc/skel/.config/htop/htoprc
-        echo "header_margin=1" >> /etc/skel/.config/htop/htoprc
-        echo "detailed_cpu_time=0" >> /etc/skel/.config/htop/htoprc
-        echo "cpu_count_from_zero=0" >> /etc/skel/.config/htop/htoprc
-        echo "update_process_names=0" >> /etc/skel/.config/htop/htoprc
-        echo "account_guest_in_cpu_meter=0" >> /etc/skel/.config/htop/htoprc
-        echo "color_scheme=5" >> /etc/skel/.config/htop/htoprc
-        echo "delay=15" >> /etc/skel/.config/htop/htoprc
-        echo "left_meters=LeftCPUs2 Memory Swap" >> /etc/skel/.config/htop/htoprc
-        echo "left_meter_modes=1 1 1" >> /etc/skel/.config/htop/htoprc
-        echo "right_meters=RightCPUs2 Tasks LoadAverage Uptime" >> /etc/skel/.config/htop/htoprc
-        echo "right_meter_modes=1 2 2 2" >> /etc/skel/.config/htop/htoprc
-        sleep 2
-            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text="There was an error while\nChanging the Resource Usage theme!"
-                        fi
+  log_upgrade "HTOPSKEL"
+  echo "#⚫ Updating to new Resource Usage theme..."
+  touch /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "fields=0 48 17 18 38 39 40 2 46 47 49 1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "sort_key=46" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "sort_direction=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "hide_threads=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "hide_kernel_threads=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "hide_userland_threads=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "shadow_other_users=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "show_thread_names=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "show_program_path=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "highlight_base_name=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "highlight_megabytes=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "highlight_threads=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "tree_view=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "header_margin=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "detailed_cpu_time=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "cpu_count_from_zero=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "update_process_names=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "account_guest_in_cpu_meter=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "color_scheme=5" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "delay=15" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "left_meters=LeftCPUs2 Memory Swap" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "left_meter_modes=1 1 1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "right_meters=RightCPUs2 Tasks LoadAverage Uptime" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  echo "right_meter_modes=1 2 2 2" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "HTOPSKEL - Error"
+    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Resource Usage theme.\n\n$REPORTERROR"
+  fi
 }
 
 # Modify Terminal theme in /etc/skel
 ALLTERTHEM() {
-    echo "#Updating system Terminal themes..."
-        mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup
-        touch /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "[general]" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "fontname=Monospace 10" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "selchars=-A-Za-z0-9,./?%&#:_" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "scrollback=100000" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "bgcolor=#1A1E1F" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "bgalpha=65535" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "fgcolor=#f0f0f0" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "disallowbold=false" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "cursorblinks=true" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "cursorunderline=false" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "audiblebell=false" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "tabpos=top" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "hidescrollbar=false" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "hidemenubar=false" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "hideclosebutton=false" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "disablef10=true" >> /etc/skel/.config/lxterminal/lxterminal.conf
-        echo "disablealt=false" >> /etc/skel/.config/lxterminal/lxterminal.conf
-	mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup
-	cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/
-	chown root:root /root/.config/lxterminal/lxterminal.conf 
-        sleep 2
-            if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-                        echo "#Error"
-                    sleep 2
-                                        zenity --error \
-                                        --title="Error" --text="There was an error while\nChanging the system Terminal themes!"
-                        fi
+  log_upgrade "ALLTERTHEM"
+  echo "#Updating system Terminal themes..."
+  mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup 2>&1 | tee -a $LOGFILE
+  touch /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "[general]" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "fontname=Monospace 10" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "selchars=-A-Za-z0-9,./?%&#:_" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "scrollback=100000" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "bgcolor=#1A1E1F" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "bgalpha=65535" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "fgcolor=#f0f0f0" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "disallowbold=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "cursorblinks=true" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "cursorunderline=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "audiblebell=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "tabpos=top" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "hidescrollbar=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "hidemenubar=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "hideclosebutton=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "disablef10=true" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  echo "disablealt=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+    mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup 2>&1 | tee -a $LOGFILE
+    cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
+    chown root:root /root/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "ALLTERTHEM - Error"
+    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the system Terminal themes.\n\n$REPORTERROR"
+  fi
 }
 
 # Get Conky for Linux Lite 3.0 add it to /etc/skel
 GETCONKY() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /etc/skel && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz && sudo chown root:root .conky && sleep 2 )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Adding Lite Widget to /etc/skel..." \
---width=600 --auto-close )
+  log_upgrade "GETCONKY"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /etc/skel && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz &&  chown root:root .conky && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' | zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Adding Lite Widget to /etc/skel...")
 unset UPDATER
 }
 
 # Improvements to the Lite Desktop Widget
 UPDCONKSKEL() {
-UPDATER=$( stdbuf -oL /bin/bash \-c '(sudo sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$USER"/g /etc/skel/.conky/widget && sleep 2 )' 2>&1 |
-stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-zenity --progress --no-cancel --percentage="$PERCENTAGE"  --title="Updating the Lite Desktop Widget in skel..." \
---width=600 --auto-close )
-            if [ $? = 1 ]; then
-                zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
-            fi    
+  log_upgrade "UPDCONKSKEL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$MYUSER"/g /etc/skel/.conky/widget && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="$APPNAME" --text="Updating the Lite Desktop Widget in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 return
 }
@@ -368,77 +326,47 @@ return
 #Check the version and start  the appropriate function
 LLVER=$(awk '{print $3}' /etc/llver)
 
-if [ "$LLVER" == "3.0" ]; then
-    LL30SYSTEM
-elif [ "$LLVER" == "3.2" ]; then
-    LL32SYSTEM
-elif [ "$LLVER" == "3.4" ]; then
-   LL34SYSTEM
-elif [ "$LLVER" == "3.6" ]; then
-    LL36SYSTEM
-elif [ "$LLVER" == "3.8" ]; then
-    zenity --info --text="You are already running the latest release"
-    exit 0
-fi
-
+  if [ "$LLVER" == "3.0" ]; then LL30SYSTEM
+elif [ "$LLVER" == "3.2" ]; then LL32SYSTEM
+elif [ "$LLVER" == "3.4" ]; then LL34SYSTEM
+elif [ "$LLVER" == "3.6" ]; then LL36SYSTEM
+elif [ "$LLVER" == "3.8" ]; then zenity --info --text="You are already running the latest release."; exit 0
+  fi
 # Check if ARRAYB is empty
 # If it is skip the execution
 if [ ${#ARRAYB[@]} -ne 0 ]; then
-
     x=0
     for k in "${!ARRAYB[@]}"; do  x=$(( $x + 1 )); done  # Get the total number of selected items in array B
-
     TOTAL_LINES=$x
     i=0
-
     printf '%s \n' "${ARRAYB[@]}"|
-    while read  line
-        do
-            $line     # Execute functions one by one
-            if [ $? = 1 ]; then
-                zenity --error --title="Lite Upgrade" --text="There was an error while performing upgrades:\n ${line}"
-                exit 1
-            fi    
+    while read  line; do
+      $line     # Execute functions one by one
+        if [ $? = 1 ]; then log_upgrade "Error - $line"; zenity --error --title="$APPNAME" --text="An error occurred while performing upgrades:\n ${line}"; exit 1 ; fi
         let i++
-         (( PERCENTAGE = 100 \* ${i} / ${TOTAL_LINES} ))
-         echo "$PERCENTAGE"
-
-        if [ "$PERCENTAGE" == "100" ]; then
-            echo "#Done"
-            sleep 2
-        fi
-    
-    done| zenity --progress  --title="Lite Upgrade" --auto-kill --auto-close --width=300
+          (( PERCENTAGE = 100 \* ${i} / ${TOTAL_LINES} ))
+        echo "$PERCENTAGE"
+        if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed!" && sleep 2; fi
+    done| zenity --progress  --title="$APPNAME" --auto-kill --auto-close --no-cancel --width=400
 fi
-
 # Check if ARRAYC is empty
 # If it is skip the execution
 if [ ${#ARRAYC[@]} -ne 0 ]; then
-
     x=0
     for k in "${!ARRAYC[@]}"; do  x=$(( $x + 1 )); done  # Get the total number of selected items in the array
-
     i=0
     TOTAL_LINES=$x
     PERCENTAGE=0
     printf '%s \n' "${ARRAYC[@]}"|
-    while read  line
-        do
+    while read  line; do
         (( PERCENTAGE = 100 \* ${i} / ${TOTAL_LINES} ))
-            $line     # Execute functions one by one
-            if [ $? = 1 ]; then
-                zenity --info --title="Lite Upgrade" --text="Error:\n${line}"
-            fi    
+        $line     # Execute functions one by one
+        if [ $? = 1 ]; then log_upgrade "Error - $line"; zenity --error --title="$APPNAME" --text="An error occurred while performing upgrades:\n ${line}"; fi
         let i++
-
-        if [ "$PERCENTAGE" == "100" ]; then
-            echo "#Done"
-            sleep 2
-        fi
-    
+    if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed!" && sleep 2 ; fi
     done
 fi
 
 unset ARAYB
 unset ARAYC
-unset _USER
+unset MYUSER
