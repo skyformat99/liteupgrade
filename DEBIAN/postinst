@@ -3,8 +3,12 @@ chown root:root /usr/bin/lite-upgrade-series3
 chown root:root /usr/bin/lite-upgrade-system-series3
 chown root:root /usr/share/applications/liteupgrade.desktop
 chown root:root /usr/share/pixmaps/update-manager.png
+chown root:root /etc/skel -R
 
 chmod 755 /usr/bin/lite-upgrade-series3 
 chmod 755 /usr/bin/lite-upgrade-system-series3
 chmod 644 /usr/share/applications/liteupgrade.desktop
 chmod 644 /usr/share/pixmaps/update-manager.png
+
+chmod +x /etc/skel/.conky/start
+chmod +x /etc/skel/.conky/updates

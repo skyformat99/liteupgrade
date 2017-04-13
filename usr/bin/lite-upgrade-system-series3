@@ -120,15 +120,15 @@ esac
 BUPETCSKEL30() {
   log_upgrade "BUPETCSKEL30"
   echo "#⚫ Backing up /etc/skel files..." && sleep 2
-    mkdir -p /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  mkdir -p /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
   cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
   cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
 }
 
 BUPETCSKEL3064() {
   log_upgrade "BUPETCSKEL3064"
-    echo "#⚫ Backing up /etc/skel files..." && sleep 2
-    mkdir -p /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
   cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
   cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
 }
@@ -137,15 +137,15 @@ BUPETCSKEL3064() {
 BUPETCSKEL32() {
   log_upgrade "BUPETCSKEL32"
   echo "#⚫ Backing up /etc/skel files..." && sleep 2
-    mkdir -p /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  mkdir -p /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
   cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
   cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
 }
 
 BUPETCSKEL3264() {
   log_upgrade "BUPETCSKEL3264"
-    echo "#⚫ Backing up /etc/skel files..." && sleep 2
-    mkdir -p /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
   cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
   cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
 }
@@ -296,9 +296,9 @@ ALLTERTHEM() {
   echo "hideclosebutton=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
   echo "disablef10=true" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
   echo "disablealt=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-    mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup 2>&1 | tee -a $LOGFILE
-    cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
-    chown root:root /root/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
+  chown root:root /root/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
   sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "ALLTERTHEM - Error"
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the system Terminal themes.\n\n$REPORTERROR"
   fi
@@ -315,7 +315,7 @@ unset UPDATER
 # Improvements to the Lite Desktop Widget
 UPDCONKSKEL() {
   log_upgrade "UPDCONKSKEL"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$MYUSER"/g /etc/skel/.conky/widget && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$USER"/g /etc/skel/.conky/widget && sleep 2 )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
   zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="$APPNAME" --text="Updating the Lite Desktop Widget in skel...")
   if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
