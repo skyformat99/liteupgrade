@@ -35,7 +35,7 @@ log_upgrade "---------- $APPNAME ----------"
 MKDIRBUPS30() {
   log_upgrade "MKDIRBUPS30"
   echo "#⚫ Creating backup directories..." && sleep 2
-  mkdir -p /home/$MYUSER/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  (mkdir -p /home/$MYUSER/.llupgradebackup/3.0 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
     zenity --error --width="320" --title="$APPNAME - Error" --text="An error occurred while creating backup directories.\n\n$REPORTERROR\nUpgrade canceled."; exit 1
   fi
@@ -44,9 +44,9 @@ MKDIRBUPS30() {
 BUPHOMEUSER30() {
   log_upgrade "BUPHOMEUSER30"
   echo "#⚫ Backing up selected home files..." && sleep 2
-    chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
-    chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
+  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
+  (cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.0 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
     zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
   fi
@@ -55,7 +55,7 @@ BUPHOMEUSER30() {
 MKDIRBUPS32() {
   log_upgrade "MKDIRBUPS32"
   echo "#⚫ Creating backup directories..." && sleep 2
-  mkdir -p /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  (mkdir -p /home/$MYUSER/.llupgradebackup/3.2 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
     zenity --error --width="320" --title="$APPNAME - Error" --text="An error occurred while creating backup directories.\n\n$REPORTERROR\nUpgrade canceled."; exit 1
   fi
@@ -64,11 +64,12 @@ MKDIRBUPS32() {
 BUPHOMEUSER32() {
   log_upgrade "BUPHOMEUSER32"
   echo "#⚫ Backing up selected home files..." && sleep 2
-    chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
-    chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
+  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
+  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
   cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
   cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
   cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  chown $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup 2>&1 | tee -a $LOGFILE
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
     zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
   fi
@@ -123,7 +124,7 @@ WINSNAP() {
   log_upgrade "WINSNAP"
   UPDATER=$( xfconf-query -c xfwm4 -p /general/tile_on_move -s true && xfconf-query -c xfwm4 -p /general/snap_resist -s true && xfconf-query -c xfwm4 -p /general/wrap_windows -s false 2>&1 | tee -a $LOGFILE && sleep 2 |
   zenity --progress --width=400 --title="$APPNAME" --percentage=20  --auto-close --no-cancel --text="Setting Window snapping feature...")
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "WINSNAP - Error"
+  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "WINSNAP - Error"
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while setting the Window snapping feature.\n\n$REPORTERROR"
   fi
 unset UPDATER
