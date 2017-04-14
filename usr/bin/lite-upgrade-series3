@@ -122,7 +122,7 @@ NOTIFYCH() {
 # Window snapping & tiling
 WINSNAP() {
   log_upgrade "WINSNAP"
-  UPDATER=$( xfconf-query -c xfwm4 -p /general/tile_on_move -s true && xfconf-query -c xfwm4 -p /general/snap_resist -s true && xfconf-query -c xfwm4 -p /general/wrap_windows -s false 2>&1 | tee -a $LOGFILE && sleep 2 |
+  UPDATER=$( xfconf-query -c xfwm4 -p /general/tile_on_move -s true && xfconf-query -c xfwm4 -p /general/snap_resist -s true && xfconf-query -c xfwm4 -p /general/wrap_windows -s false && sleep 2 |
   zenity --progress --width=400 --title="$APPNAME" --percentage=20  --auto-close --no-cancel --text="Setting Window snapping feature...")
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "WINSNAP - Error"
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while setting the Window snapping feature.\n\n$REPORTERROR"
