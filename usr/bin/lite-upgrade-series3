@@ -100,7 +100,7 @@ unset UPDATER
 # Execute bash scripts   exec 1>$log_upgrade 2>&1
 EXEBASHSCR() {
   log_upgrade "EXEBASHSCR"
-UPDATER=$( stdbuf -oL /bin/bash \-c '(xfconf-query --channel thunar --property /misc-exec-shell-scripts-by-default --create --type bool --set true && sleep 2 )' 2>&1 |
+UPDATER=$( stdbuf -oL /bin/bash \-c '( sudo -u '${MYUSER}' xfconf-query --channel thunar --property /misc-exec-shell-scripts-by-default --create --type bool --set true && sleep 2 )' 2>&1 |
 stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
 zenity --progress --width=400 --title="$APPNAME" --percentage="$PERCENTAGE" --auto-close --no-cancel --text="Adding Execute bash scripts feature...")
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "EXEBASHSCR - Error"
@@ -122,7 +122,7 @@ NOTIFYCH() {
 # Window snapping & tiling
 WINSNAP() {
   log_upgrade "WINSNAP"
-  UPDATER=$( xfconf-query -c xfwm4 -p /general/tile_on_move -s true && xfconf-query -c xfwm4 -p /general/snap_resist -s true && xfconf-query -c xfwm4 -p /general/wrap_windows -s false && sleep 2 |
+  UPDATER=$( sudo -u ${MYUSER} xfconf-query -c xfwm4 -p /general/tile_on_move -s true && sudo -u ${MYUSER} xfconf-query -c xfwm4 -p /general/snap_resist -s true && sudo -u ${MYUSER} xfconf-query -c xfwm4 -p /general/wrap_windows -s false && sleep 2 |
   zenity --progress --width=400 --title="$APPNAME" --percentage=20  --auto-close --no-cancel --text="Setting Window snapping feature...")
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "WINSNAP - Error"
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while setting the Window snapping feature.\n\n$REPORTERROR"
