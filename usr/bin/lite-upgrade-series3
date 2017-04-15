@@ -361,13 +361,21 @@ export -f log_upgrade; export MYUSER REPORTERROR UPGR APPNAME LOGFILE IC
 if grep "Linux Lite ${UPGR}" /etc/llver; then log_upgrade "Upgrade succeeded!"; REBOOT; else log_upgrade "Upgrade failed - /etc/llver is not ${UPGR}"; zenity --info --title="$APPNAME" --text="Upgrade canceled."; fi
 }
 
-# We start here
+upgrade_exec() {
 # check LL current version and start the appropriate function
 log_upgrade "Upgrading version:"
+# check if version release exists in /etc/llver. If not, create it from /etc/issue file
+if [ "$(grep -c "Linux Lite" /etc/llver)" -ge 1 ]; then :; else grep "Linux Lite" /etc/issue | cut -c 1-14 > /etc/llver; fi
+# check LL version and start the appropriate function
 if grep "Linux Lite 3.0" /etc/llver; then log_upgrade "Linux Lite 3.0"; LL30
 elif grep "Linux Lite 3.2" /etc/llver; then log_upgrade "Linux Lite 3.2"; LL32
-else zenity --info --text="\nYou are already running the latest release."; exit 0
+else latest_version
 fi
+}
+
+# We start here
+latest_version() { if grep "Linux Lite 3.4" /etc/llver; then log_upgrade "Linux Lite $UPGR"; zenity --info --text="\nYou are already running the latest release."; exit 0 ; else :; fi }
+latest_version
 # First dialog box - we must ask for elevation from the start otherwise a regular user can run lite-upgrade-series3 unnecessarily
 if [ $EUID -ne 0 ]; then
   zenity --question --icon-name="info" --width="430" --title="$APPNAME" \
@@ -412,6 +420,7 @@ Please check your internet connection and try again.\n\nUpgrade has been cancele
     esac
 fi
 
+upgrade_exec
 RUN
 
 exit 0
