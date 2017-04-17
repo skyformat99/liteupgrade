@@ -102,7 +102,7 @@ EXEBASHSCR() {
   log_upgrade "EXEBASHSCR"
   BASHSEXECDEFAULT=".config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml"
   # check defaults
-  sleep 2 |zenity --progress --width=400 --title="test" --pulsate --auto-close --no-cancel --text="Adding Execute bash scripts feature..."
+  sleep 2 |zenity --progress --width=400 --title="$APPNAME" --pulsate --auto-close --no-cancel --text="Adding Execute bash scripts feature..."
   grep -q -F 'misc-exec-shell-scripts-by-default' /home/$MYUSER/$BASHSEXECDEFAULT && echo $?
   if [ $? = 0 ]; then
     sed -i 's/.*misc-exec-shell-scripts-by-default.*/  <property name="misc-exec-shell-scripts-by-default" type="bool" value="true"\/>/' /home/$MYUSER/$BASHSEXECDEFAULT
