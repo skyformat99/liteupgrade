@@ -1,7 +1,11 @@
 lite-upgrade-series3 (2.0-0090-linuxlite) citrine; urgency=medium
 
-  * Placeholder for changelog
-  * Placeholder for changelog
-  * Placeholder for changelog
+  * Updated dialogs
+  * Added bug fix for /etc/llver issue when upgrading to later version
+  * Updated winsnap and exebashcr execution
+  	- set globally in /etc/skel for new accounts defaults
+  * Generate upgrade logs
+  * Updated folders permissions created during upgrades
+  * Minor changes in commands execution
 
  -- Jerry Bezencon <valtam@linuxliteos.com>  Wed, 12 Apr 2017 01:14:46 +1200
