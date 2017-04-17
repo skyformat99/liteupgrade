@@ -9,7 +9,7 @@ Software to upgrade Linux Lite from within a Series.
 
 This project is under the GPLv2 license. Unless otherwise stated in individual files.
 
-##Authors
+## Authors
 - [Jerry Bezencon](https://github.com/linuxlite/)
 - [Ralphy](https://github.com/ralphys)
 - [Misko-2083](https://github.com/Misko-2083/)
