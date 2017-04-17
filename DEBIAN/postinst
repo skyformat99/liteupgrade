@@ -10,5 +10,5 @@ chmod 755 /usr/bin/lite-upgrade-system-series3
 chmod 644 /usr/share/applications/liteupgrade.desktop
 chmod 644 /usr/share/pixmaps/update-manager.png
 
-chmod +x /etc/skel/.conky/start
-chmod +x /etc/skel/.conky/updates
+[ -f "/etc/skel/.conky/start" ] && chmod +x /etc/skel/.conky/start
+[ -f "/etc/skel/.conky/updates" ] && chmod +x /etc/skel/.conky/updates
