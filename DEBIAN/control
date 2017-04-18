@@ -6,7 +6,7 @@ Priority: required
 Installed-Size: 47
 Depends: apt, zenity, gksu
 Homepage: http://www.linuxliteos.com
-Maintainer: Jerry Bezencon<valtam@linuxliteos.com>
+Maintainer: Jerry Bezencon <valtam@linuxliteos.com>
 Architecture: all
 Description: Lite Upgrade Series 3
  An application to upgrade Linux Lite
