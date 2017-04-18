@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 chown root:root /usr/bin/lite-upgrade-series3
 chown root:root /usr/bin/lite-upgrade-system-series3
 chown root:root /usr/share/applications/liteupgrade.desktop
@@ -10,9 +11,10 @@ chmod 755 /usr/bin/lite-upgrade-system-series3
 chmod 644 /usr/share/applications/liteupgrade.desktop
 chmod 644 /usr/share/pixmaps/update-manager.png
 
-# This folder MUST have correct permissions for systems with multiple accounts
-chown root:root /etc/skel -R
 find /etc/skel -type d -exec chmod 755 {} \;
 find /etc/skel -type f -exec chmod 644 {} \;
-[ -f "/etc/skel/.conky/start" ] && chmod +x /etc/skel/.conky/start
-[ -f "/etc/skel/.conky/updates" ] && chmod +x /etc/skel/.conky/updates
+
+if [ -d "/etc/skel/.conky" ];then
+   [ -f "/etc/skel/.conky/start" ] && chmod +x /etc/skel/.conky/start
+   [ -f "/etc/skel/.conky/updates" ] && chmod +x /etc/skel/.conky/updates
+else :; fi
