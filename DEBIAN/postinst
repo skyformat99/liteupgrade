@@ -15,6 +15,6 @@ find /etc/skel -type d -exec chmod 755 {} \;
 find /etc/skel -type f -exec chmod 644 {} \;
 
 if [ -d "/etc/skel/.conky" ]; then
-   [ -f "/etc/skel/.conky/start" ] && chmod +x /etc/skel/.conky/start
-   [ -f "/etc/skel/.conky/updates" ] && chmod +x /etc/skel/.conky/updates
+   if [ -f "/etc/skel/.conky/start" ]; then chmod +x /etc/skel/.conky/start; else :; fi
+   if [ -f "/etc/skel/.conky/updates" ]; then chmod +x /etc/skel/.conky/updates; else :; fi
 else :; fi
