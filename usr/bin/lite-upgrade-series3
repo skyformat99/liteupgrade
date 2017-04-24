@@ -226,7 +226,7 @@ HTOPTHEME() {
 }
 
 REBOOT() {
-  log_upgrade "Waiting for restart confirmation..." && log_upgrade "Moving upgrade log to user's home directory... All done!"
+  log_upgrade "Waiting for restart confirmation..." && log_upgrade "Moving upgrade log to user's home directory... All done."
     mv -f "$LOGFILE" /home/$MYUSER/ ; chown $MYUSER:$MYUSER "$LOGFILE"
 while (true); do
   # Set dialog icon variable
@@ -351,14 +351,14 @@ if [ ${#ARRAYA[@]} -ne 0 ]; then
       let i++
         (( PERCENTAGE = 100 \* ${i} / ${TOTAL_LINES} ))
         echo "$PERCENTAGE"
-        if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed!" && sleep 2 ; fi
+        if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed." && sleep 2 ; fi
       done| zenity --progress  --title="$APPNAME" --auto-kill --auto-close --no-cancel --width=400
 fi
 
 export -f log_upgrade; export MYUSER REPORTERROR UPGR APPNAME LOGFILE IC
 /usr/bin/lite-upgrade-system-series3     # Run the next script
 
-if grep "Linux Lite ${UPGR}" /etc/llver; then log_upgrade "Upgrade succeeded!"; REBOOT; else log_upgrade "Upgrade failed - /etc/llver is not ${UPGR}"; zenity --info --title="$APPNAME" --text="Upgrade canceled."; fi
+if grep "Linux Lite ${UPGR}" /etc/llver; then log_upgrade "Upgrade succeeded."; REBOOT; else log_upgrade "Upgrade failed - /etc/llver is not ${UPGR}"; zenity --info --title="$APPNAME" --text="Upgrade canceled."; fi
 }
 
 upgrade_exec() {
@@ -410,7 +410,7 @@ case $? in
 Please check your internet connection and try again.\n\nUpgrade has been canceled."
           exit 0
         else
-          log_upgrade "Linux Lite Master is ONLINE - passed!"; :
+          log_upgrade "Linux Lite Master is ONLINE - passed."; :
         fi
         gksu -m '
     <b>   Lite Upgrade requires Administrative privileges</b>

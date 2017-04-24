@@ -346,7 +346,7 @@ if [ ${#ARRAYB[@]} -ne 0 ]; then
         let i++
           (( PERCENTAGE = 100 \* ${i} / ${TOTAL_LINES} ))
         echo "$PERCENTAGE"
-        if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed!" && sleep 2; fi
+        if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed." && sleep 2; fi
     done| zenity --progress  --title="$APPNAME" --auto-kill --auto-close --no-cancel --width=400
 fi
 # Check if ARRAYC is empty
@@ -363,7 +363,7 @@ if [ ${#ARRAYC[@]} -ne 0 ]; then
         $line     # Execute functions one by one
         if [ $? = 1 ]; then log_upgrade "Error - $line"; zenity --error --title="$APPNAME" --text="An error occurred while performing upgrades:\n ${line}"; fi
         let i++
-    if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed!" && sleep 2 ; fi
+    if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed." && sleep 2 ; fi
     done
 fi
 
