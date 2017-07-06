@@ -10,15 +10,20 @@
 
 # Ensure multi-language support
 export LANG=C
-# release Upgrade
-UPGR="3.4"
-# admin user varible
+
+# Release Upgrade
+UPGR="3.6"
+
+# Admin user variable
 MYUSER=$(sudo -u ${SUDO_USER:-$USER} whoami)
+
 # Linux Lite default dialog icon
 IC="/usr/share/icons/zenity-llcc.png"
-# application tittle
+
+# Application title
 APPNAME="Linux Lite Upgrade Utility"
-# log file variables
+
+# Log file variables
 LOGFILE=/tmp/lite-upgrade.log
 REPORTERROR="This error has been logged to $LOGFILE."
 # delete previous lite-upgrade.log file & create a new one
@@ -30,7 +35,9 @@ log_upgrade(){
 }
 > $LOGFILE
 log_upgrade "---------- $APPNAME ----------"
+
 # Functions
+
 # Create backup directories for Linux Lite 3.0
 MKDIRBUPS30() {
   log_upgrade "MKDIRBUPS30"
@@ -40,10 +47,12 @@ MKDIRBUPS30() {
     zenity --error --width="320" --title="$APPNAME - Error" --text="An error occurred while creating backup directories.\n\n$REPORTERROR\nUpgrade canceled."; exit 1
   fi
 }
+
 # Backup /home/$USER/ selected config files on Linux Lite 3.0
 BUPHOMEUSER30() {
   log_upgrade "BUPHOMEUSER30"
   echo "#⚫ Backing up selected home files..." && sleep 2
+  chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE # ~/.config perms fix
   chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
   chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
   (cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.0 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
@@ -51,7 +60,8 @@ BUPHOMEUSER30() {
     zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
   fi
 }
-# Create backup directories for Linux Lite 3.2 ✔
+
+# Create backup directories for Linux Lite 3.2
 MKDIRBUPS32() {
   log_upgrade "MKDIRBUPS32"
   echo "#⚫ Creating backup directories..." && sleep 2
@@ -60,16 +70,44 @@ MKDIRBUPS32() {
     zenity --error --width="320" --title="$APPNAME - Error" --text="An error occurred while creating backup directories.\n\n$REPORTERROR\nUpgrade canceled."; exit 1
   fi
 }
+
 # Backup /home/$USER/ select config files on Linux Lite 3.2
 BUPHOMEUSER32() {
   log_upgrade "BUPHOMEUSER32"
   echo "#⚫ Backing up selected home files..." && sleep 2
+  chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE # ~/.config perms fix
   chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
   chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
   cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
   cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
   cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
-  chown $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup 2>&1 | tee -a $LOGFILE
+  chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup 2>&1 | tee -a $LOGFILE
+  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
+    zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
+  fi
+}
+
+# Create backup directories for Linux Lite 3.4
+MKDIRBUPS34() {
+  log_upgrade "MKDIRBUPS34"
+  echo "#⚫ Creating backup directories..." && sleep 2
+  (mkdir -p /home/$MYUSER/.llupgradebackup/3.4 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
+  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
+    zenity --error --width="320" --title="$APPNAME - Error" --text="An error occurred while creating backup directories.\n\n$REPORTERROR\nUpgrade canceled."; exit 1
+  fi
+}
+
+# Backup /home/$USER/ select config files on Linux Lite 3.4
+BUPHOMEUSER34() {
+  log_upgrade "BUPHOMEUSER34"
+  echo "#⚫ Backing up selected home files..." && sleep 2
+  chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE # ~/.config perms fix
+  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
+  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
+  cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup 2>&1 | tee -a $LOGFILE
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
     zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
   fi
@@ -86,6 +124,7 @@ ADDCONKY() {
   fi
 unset UPDATER
 }
+
 # Improvements to the Lite Desktop Widget
 UPDCONKY() {
   log_upgrade "UPDCONKY"
@@ -97,6 +136,7 @@ UPDCONKY() {
   fi
 unset UPDATER
 }
+
 # Execute bash scripts   exec 1>$log_upgrade 2>&1
 EXEBASHSCR() {
   log_upgrade "EXEBASHSCR"
@@ -138,6 +178,7 @@ NOTIFYCH() {
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Notification theme.\n\n$REPORTERROR"
   fi
 }
+
 # Window snapping & tiling
 WINSNAP() {
   log_upgrade "WINSNAP"
@@ -182,6 +223,17 @@ TERMTHEME() {
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Terminal theme.\n\n$REPORTERROR"
   fi
 }
+
+# Bluray additional support in VLC - USER
+BLURAYVLCUSER() {
+  log_upgrade "BLURAYVLCUSER"
+  echo "#⚫ Adding additional Bluray support in VLC for users..."
+   mkdir -p /home/$MYUSER/.config/aacs ; cd /home/$MYUSER/.config/aacs/ ; wget http://vlc-bluray.whoknowsmy.name/files/KEYDB.cfg ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.config/aacs 2>&1 | tee -a $LOGFILE
+  sleep 2 ; if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "BLURAYVLCUSER - Error"
+    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while adding additional Bluray support in VLC for users.\n\n$REPORTERROR"
+  fi
+}
+
 # Set lite-welcome to autostart on first boot
 LITEWELCOME() {
   log_upgrade "LITEWELCOME"
@@ -191,6 +243,7 @@ LITEWELCOME() {
   else :; fi
 unset UPDATER
 }
+
 # Change to new HTOP theme, file is: /home/$MYUSER/.config/htop/htoprc
 HTOPTHEME() {
   log_upgrade "HTOPTHEME"
@@ -279,6 +332,7 @@ case "$arch" in
     ARRAYA+=('NOTIFYCH')
     ARRAYA+=('WINSNAP')
     ARRAYA+=('TERMTHEME')
+    ARRAYA+=('BLURAYVLCUSER')
     ARRAYA+=('LITEWELCOME')
     ARRAYA+=('HTOPTHEME')
     ;;
@@ -290,6 +344,7 @@ case "$arch" in
     ARRAYA+=('NOTIFYCH')
     ARRAYA+=('WINSNAP')
     ARRAYA+=('TERMTHEME')
+    ARRAYA+=('BLURAYVLCUSER')
     ARRAYA+=('LITEWELCOME')
     ARRAYA+=('HTOPTHEME')
     ;;
@@ -322,6 +377,7 @@ case "$arch" in
     ARRAYA+=('NOTIFYCH')
     ARRAYA+=('WINSNAP')
     ARRAYA+=('TERMTHEME')
+    ARRAYA+=('BLURAYVLCUSER')
     ARRAYA+=('LITEWELCOME')
     ;;
     amd64)
@@ -332,6 +388,40 @@ case "$arch" in
     ARRAYA+=('NOTIFYCH')
     ARRAYA+=('WINSNAP')
     ARRAYA+=('TERMTHEME')
+    ARRAYA+=('BLURAYVLCUSER')
+    ARRAYA+=('LITEWELCOME')
+    ;;
+esac
+}
+
+LL34() {
+# Invoke arrays
+ARRAYA=()       # Array for LL 3.4
+
+# check the arch
+log_upgrade "Checking Architecture:"
+arch=$(uname -m) ; log_upgrade "$arch"
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYA+=('MKDIRBUPS34')
+    ARRAYA+=('BUPHOMEUSER34')
+    ARRAYA+=('BLURAYVLCUSER')
+    ARRAYA+=('LITEWELCOME')
+    ;;
+    amd64)
+    ARRAYA+=('MKDIRBUPS34')
+    ARRAYA+=('BUPHOMEUSER34')
+    ARRAYA+=('BLURAYVLCUSER')
     ARRAYA+=('LITEWELCOME')
     ;;
 esac
@@ -369,18 +459,19 @@ if [ "$(grep -c "Linux Lite" /etc/llver)" -ge 1 ]; then :; else grep "Linux Lite
 # check LL version and start the appropriate function
 if grep "Linux Lite 3.0" /etc/llver; then log_upgrade "Linux Lite 3.0"; LL30
 elif grep "Linux Lite 3.2" /etc/llver; then log_upgrade "Linux Lite 3.2"; LL32
+elif grep "Linux Lite 3.4" /etc/llver; then log_upgrade "Linux Lite 3.4"; LL34
 else latest_version
 fi
 }
 
 # We start here
-latest_version() { if grep "Linux Lite 3.4" /etc/llver; then log_upgrade "Linux Lite $UPGR"; zenity --info --text="\nYou are already running the latest release."; exit 0 ; else :; fi }
+latest_version() { if grep "Linux Lite 3.6" /etc/llver; then log_upgrade "Linux Lite $UPGR"; zenity --info --text="\nYou are already running the latest release."; exit 0 ; else :; fi }
 latest_version
 # First dialog box - we must ask for elevation from the start otherwise a regular user can run lite-upgrade-series3 unnecessarily
 if [ $EUID -ne 0 ]; then
   zenity --question --icon-name="info" --width="430" --title="$APPNAME" \
          --window-icon="$IC" --cancel-label="Cancel" --ok-label="Upgrade" \
-         --text='\n               <span font="12">You are about to upgrade to Linux Lite 3.4</span>\n \
+         --text='\n               <span font="12">You are about to upgrade to Linux Lite 3.6</span>\n \
 Your computer must remain connected to the internet during this time.\n \
 A connectivity check to Linux Lite repositories will be conducted to make sure that the connection with the server can be established.\n \
 Once upgrades have taken place, you must restart the system to complete the upgrade process. Please save your work before continuing.\n\n \

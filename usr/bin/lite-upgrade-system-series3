@@ -21,7 +21,7 @@ apt-get clean all 2>&1 | tee -a $LOGFILE
 LL30SYSTEM() {
 # Invoke arrays
 ARRAYB=()
-ARAYC=()
+ARRAYC=()
 
 #Check the arch
 arch=$(uname -m)
@@ -48,6 +48,7 @@ case "$arch" in
     ARRAYC+=('NOTIFYCHSKEL')
     ARRAYC+=('HTOPSKEL')
     ARRAYC+=('ALLTERTHEM')
+    ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('GETCONKY')
     ARRAYC+=('UPDCONKSKEL')
     ;;
@@ -63,6 +64,7 @@ case "$arch" in
     ARRAYC+=('NOTIFYCHSKEL')
     ARRAYC+=('HTOPSKEL')
     ARRAYC+=('ALLTERTHEM')
+    ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('GETCONKY')
     ARRAYC+=('UPDCONKSKEL')
     ;;
@@ -72,7 +74,7 @@ esac
 LL32SYSTEM() {
 # Invoke arrays
 ARRAYB=()
-ARAYC=()
+ARRAYC=()
 
 #Check the arch
 arch=$(uname -m)
@@ -98,6 +100,7 @@ case "$arch" in
     ARRAYC+=('LBPLYUB')
     ARRAYC+=('NOTIFYCHSKEL')
     ARRAYC+=('ALLTERTHEM')
+    ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('UPDCONKSKEL')
     ;;
     amd64)
@@ -111,7 +114,51 @@ case "$arch" in
     ARRAYC+=('LBPLYUB')
     ARRAYC+=('NOTIFYCHSKEL')
     ARRAYC+=('ALLTERTHEM')
+    ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('UPDCONKSKEL')
+    ;;
+esac
+}
+
+LL34SYSTEM() {
+# Invoke arrays
+ARRAYB=()
+ARRAYC=()
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYB+=('BUPETCSKEL34')
+    ARRAYC+=('UPD1')
+    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('INPKCL')
+    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPGRUB')
+    ARRAYC+=('LBPLYUB')
+    ARRAYC+=('BLURAYVLCSYS')
+    ;;
+    amd64)
+    ARRAYB+=('BUPETCSKEL3464')
+    ARRAYC+=('UPD1')
+    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('INPKCL64')
+    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPGRUB')
+    ARRAYC+=('LBPLYUB')
+    ARRAYC+=('BLURAYVLCSYS')
     ;;
 esac
 }
@@ -150,6 +197,23 @@ BUPETCSKEL3264() {
   cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
 }
 
+# Backup /etc/skel/ Linux Lite 3.4
+BUPETCSKEL34() {
+  log_upgrade "BUPETCSKEL34"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+}
+
+BUPETCSKEL3464() {
+  log_upgrade "BUPETCSKEL3464"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+}
+
 # Get list of available updated packages
 UPD1() {
   log_upgrade "UPD1"
@@ -171,7 +235,7 @@ unset UPDATER
 # Install new packages, remove obsolete packages, clean up - 32BIT
 INPKCL() {
   log_upgrade "INPKCL"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify bcmwl-kernel-source xclip libaacs0 libbluray-bdj libbluray1 \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
   zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Downloading and Installing new packages...")
 unset UPDATER
@@ -180,7 +244,7 @@ unset UPDATER
 # Install new packages, remove obsolete packages, clean up - 64BIT
 INPKCL64() {
   log_upgrade "INPKCL64"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify bcmwl-kernel-source xclip libaacs0 libbluray-bdj libbluray1 \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
   zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Downloading and Installing new packages...")
 unset UPDATER
@@ -189,8 +253,8 @@ unset UPDATER
 # Add new wallpapers
 ADDWALL1() {
   log_upgrade "ADDWALL1"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.4/walls34.tar.gz &&  tar -xvf walls34.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && chown root:root * && chmod 644 * && sleep 2 )' 2>&1 | tee -a $LOGFILE |
-  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Adding new wallapapers...")
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.6/walls36.tar.gz &&  tar -xvf walls36.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && chown root:root * && chmod 644 * && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Adding new wallpapers...")
 unset UPDATER
 }
 
@@ -304,6 +368,14 @@ ALLTERTHEM() {
   fi
 }
 
+# Bluray additional support in VLC - SYSTEM
+BLURAYVLCSYS() {
+  log_upgrade "BLURAYVLCSYS"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(mkdir -p /etc/skel/.config/aacs && cd /etc/skel/.config/aacs/ && wget http://vlc-bluray.whoknowsmy.name/files/KEYDB.cfg && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' | zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Adding additional Bluray support in VLC for the system...")
+unset UPDATER
+}
+
 # Get Conky for Linux Lite 3.0 add it to /etc/skel
 GETCONKY() {
   log_upgrade "GETCONKY"
@@ -367,6 +439,6 @@ if [ ${#ARRAYC[@]} -ne 0 ]; then
     done
 fi
 
-unset ARAYB
-unset ARAYC
+unset ARRAYB
+unset ARRAYC
 unset MYUSER
