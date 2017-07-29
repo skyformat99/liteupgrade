@@ -371,7 +371,7 @@ ALLTERTHEM() {
 # Bluray additional support in VLC - SYSTEM
 BLURAYVLCSYS() {
   log_upgrade "BLURAYVLCSYS"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(mkdir -p /etc/skel/.config/aacs && cd /etc/skel/.config/aacs/ && wget http://vlc-bluray.whoknowsmy.name/files/KEYDB.cfg && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(mkdir -p /etc/skel/.config/aacs && cd /etc/skel/.config/aacs/ && wget http://www.labdv.com/aacs/KEYDB.cfg && sleep 2 )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' | zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Adding additional Bluray support in VLC for the system...")
 unset UPDATER
 }
