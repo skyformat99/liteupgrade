@@ -1,8 +1,8 @@
 lite-upgrade-series3 (2.0-0100-linuxlite) citrine; urgency=medium
 
-  * placeholder
+  * Update code for 3.6 release
 
- -- Jerry Bezencon <valtam@linuxliteos.com>  Thu, 20 Apr 2017 17:45:52 +1200
+ -- Jerry Bezencon <valtam@linuxliteos.com>  Sat, 29 Jul 2017 19:18:10 +1200
 
 lite-upgrade-series3 (2.0-0090-linuxlite) citrine; urgency=medium
 
