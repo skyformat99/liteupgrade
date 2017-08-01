@@ -228,7 +228,7 @@ TERMTHEME() {
 BLURAYVLCUSER() {
   log_upgrade "BLURAYVLCUSER"
   echo "#⚫ Adding additional Bluray support in VLC for users..."
-   mkdir -p /home/$MYUSER/.config/aacs ; cd /home/$MYUSER/.config/aacs/ ; wget http://www.labdv.com/aacs/KEYDB.cfg ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.config/aacs 2>&1 | tee -a $LOGFILE
+   mkdir -p /home/$MYUSER/.config/aacs ; cd /home/$MYUSER/.config/aacs/ ; wget http://repo.linuxliteos.com/upgrade/3.0-3.6/KEYDB.cfg ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.config/aacs 2>&1 | tee -a $LOGFILE
   sleep 2 ; if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "BLURAYVLCUSER - Error"
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while adding additional Bluray support in VLC for users.\n\n$REPORTERROR"
   fi
