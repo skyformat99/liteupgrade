@@ -1,6 +1,6 @@
 #!/bin/bash
 #----------------------------------------------------------------
-# Description: Linux Lite Upgrade Script - Home
+# Description: Linux Lite Upgrade Script - System
 # About: For Linux Lite 3.- Series only
 # Licence: GPLv2 Sharing is Caring
 # Author: Jerry Bezencon, Ralphy
@@ -38,37 +38,37 @@ esac
 case "$arch" in
     x86)
     ARRAYB+=('BUPETCSKEL30')
-    ARRAYC+=('UPD1')
-    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
     ARRAYC+=('INPKCL')
-    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('ADDWALLS')
     ARRAYC+=('UPLSBISSUE')
-    ARRAYC+=('UPGRUB')
-    ARRAYC+=('LBPLYUB')
-    ARRAYC+=('NOTIFYCHSKEL')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ARRAYC+=('NOTIFYTHMSKEL')
     ARRAYC+=('HTOPSKEL')
-    ARRAYC+=('ALLTERTHEM')
+    ARRAYC+=('ALLTERTHEME')
     ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('ARCTHEMETHUNDERB')
-    ARRAYC+=('GETCONKY')
-    ARRAYC+=('UPDCONKSKEL')
+    ARRAYC+=('ADDLITEWIDGSKEL')
+    ARRAYC+=('UPDLITEWIDGSKEL')
     ;;
     amd64)
     ARRAYB+=('BUPETCSKEL3064')
-    ARRAYC+=('UPD1')
-    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
     ARRAYC+=('INPKCL64')
-    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('ADDWALLS')
     ARRAYC+=('UPLSBISSUE')
-    ARRAYC+=('UPGRUB')
-    ARRAYC+=('LBPLYUB')
-    ARRAYC+=('NOTIFYCHSKEL')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ARRAYC+=('NOTIFYTHMSKEL')
     ARRAYC+=('HTOPSKEL')
-    ARRAYC+=('ALLTERTHEM')
+    ARRAYC+=('ALLTERTHEME')
     ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('ARCTHEMETHUNDERB')
-    ARRAYC+=('GETCONKY')
-    ARRAYC+=('UPDCONKSKEL')
+    ARRAYC+=('ADDLITEWIDGSKEL')
+    ARRAYC+=('UPDLITEWIDGSKEL')
     ;;
 esac
 }
@@ -93,33 +93,33 @@ esac
 case "$arch" in
     x86)
     ARRAYB+=('BUPETCSKEL32')
-    ARRAYC+=('UPD1')
-    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
     ARRAYC+=('INPKCL')
-    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('ADDWALLS')
     ARRAYC+=('UPLSBISSUE')
-    ARRAYC+=('UPGRUB')
-    ARRAYC+=('LBPLYUB')
-    ARRAYC+=('NOTIFYCHSKEL')
-    ARRAYC+=('ALLTERTHEM')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ARRAYC+=('NOTIFYTHMSKEL')
+    ARRAYC+=('ALLTERTHEME')
     ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('ARCTHEMETHUNDERB')
-    ARRAYC+=('UPDCONKSKEL')
+    ARRAYC+=('UPDLITEWIDGSKEL')
     ;;
     amd64)
     ARRAYB+=('BUPETCSKEL3264')
-    ARRAYC+=('UPD1')
-    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
     ARRAYC+=('INPKCL64')
-    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('ADDWALLS')
     ARRAYC+=('UPLSBISSUE')
-    ARRAYC+=('UPGRUB')
-    ARRAYC+=('LBPLYUB')
-    ARRAYC+=('NOTIFYCHSKEL')
-    ARRAYC+=('ALLTERTHEM')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ARRAYC+=('NOTIFYTHMSKEL')
+    ARRAYC+=('ALLTERTHEME')
     ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('ARCTHEMETHUNDERB')
-    ARRAYC+=('UPDCONKSKEL')
+    ARRAYC+=('UPDLITEWIDGSKEL')
     ;;
 esac
 }
@@ -144,25 +144,25 @@ esac
 case "$arch" in
     x86)
     ARRAYB+=('BUPETCSKEL34')
-    ARRAYC+=('UPD1')
-    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
     ARRAYC+=('INPKCL')
-    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('ADDWALLS')
     ARRAYC+=('UPLSBISSUE')
-    ARRAYC+=('UPGRUB')
-    ARRAYC+=('LBPLYUB')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
     ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('ARCTHEMETHUNDERB')
     ;;
     amd64)
     ARRAYB+=('BUPETCSKEL3464')
-    ARRAYC+=('UPD1')
-    ARRAYC+=('ERASEDPKG')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
     ARRAYC+=('INPKCL64')
-    ARRAYC+=('ADDWALL1')
+    ARRAYC+=('ADDWALLS')
     ARRAYC+=('UPLSBISSUE')
-    ARRAYC+=('UPGRUB')
-    ARRAYC+=('LBPLYUB')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
     ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('ARCTHEMETHUNDERB')
     ;;
@@ -221,19 +221,19 @@ BUPETCSKEL3464() {
 }
 
 # Get list of available updated packages
-UPD1() {
-  log_upgrade "UPD1"
+UPDPKGS() {
+  log_upgrade "UPDPKGS"
   UPDATER=$( stdbuf -oL /bin/bash \-c '( apt-get update \-y )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="$APPNAME" --text="Updating package information...")
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating repositories..." --text="Updating repositories...")
   if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
 # Erase existing available info
-ERASEDPKG() {
-  log_upgrade "ERASEDPKG"
+ERASEDPKGS() {
+  log_upgrade "ERASEDPKGS"
   UPDATER=$( stdbuf -oL /bin/bash \-c '( dpkg --clear-avail )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Clearing dpkg...")
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Clearing dpkg..." --text="Clearing dpkg...")
   if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
@@ -243,7 +243,7 @@ INPKCL() {
   log_upgrade "INPKCL"
   UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify bcmwl-kernel-source xclip libaacs0 libbluray-bdj libbluray1 \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Downloading and Installing new packages...")
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." --text="Downloading and Installing new packages...")
 unset UPDATER
 }
 
@@ -252,13 +252,13 @@ INPKCL64() {
   log_upgrade "INPKCL64"
   UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify bcmwl-kernel-source xclip libaacs0 libbluray-bdj libbluray1 \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Downloading and Installing new packages...")
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." --text="Downloading and Installing new packages...")
 unset UPDATER
 }
 
 # Add new wallpapers
-ADDWALL1() {
-  log_upgrade "ADDWALL1"
+ADDWALLS() {
+  log_upgrade "ADDWALLS"
   UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.6/walls36.tar.gz &&  tar -xvf walls36.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && chown root:root * && chmod 644 * && sleep 2 )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Adding new wallpapers...")
 unset UPDATER
@@ -267,24 +267,24 @@ unset UPDATER
 # Update lsb_release and issue files /etc changes, update /etc/llver
 UPLSBISSUE() {
   log_upgrade "UPLSBISSUE"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite "'$UPGR'"\"/g" /etc/lsb-release && echo "Linux Lite $UPGR" | tee /etc/llver && echo "Linux Lite $UPGR LTS \n \l" | tee /etc/issue && sleep 2 )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite "'$UPGR'"\"/g" /etc/lsb-release && echo "Linux Lite $UPGR LTS \n \l" | tee /etc/issue && echo "Linux Lite $UPGR" | tee /etc/llver && sleep 2 )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
   zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Updating version information...")
   if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
 # Update grub
-UPGRUB() {
-  log_upgrade "UPGRUB"
+UPDGRUB() {
+  log_upgrade "UPDGRUB"
   UPDATER=$( stdbuf -oL /bin/bash \-c '( update-grub && sleep 2 )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="$APPNAME" --text="Updating grub...")
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating Grub..." --text="Updating Grub...")
   if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
-# /lib/plymouth/themes/ubuntu-text/ changes
-LBPLYUB() {
-  log_upgrade "LBPLYUB"
+# Update /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth
+UPDPLYM() {
+  log_upgrade "UPDPLYM"
   UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/^title=Linux Lite.*$/title=Linux Lite "'$UPGR'"/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
   sed -i "s/^title=Ubuntu.*$/title=Linux Lite "'$UPGR'"/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
   sed -i "s/black=0x2c001e/black=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
@@ -292,19 +292,19 @@ LBPLYUB() {
   sed -i "s/brown=0xff4012/brown=0xffff00/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
   sed -i "s/blue=0x988592/blue=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && update-initramfs -u && sleep 2 )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Updating boot configuration please wait...")
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating boot configuration please wait...")
   if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
 # Change Notification theme
-NOTIFYCHSKEL() {
-  log_upgrade "NOTIFYCHSKEL"
+NOTIFYTHMSKEL() {
+  log_upgrade "NOTIFYTHMSKEL"
   echo "#⚫ Updating to new Notification theme..."
   cp /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup 2>&1 | tee -a $LOGFILE
   sed -i '5d' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml 2>&1 | tee -a $LOGFILE
   sed -i '5i\ \ <property name="theme" type="string" value="Default"/>' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml 2>&1 | tee -a $LOGFILE
-  sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "NOTIFYCHSKEL - Error"
+  sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "NOTIFYTHMSKEL - Error"
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Notification theme.\n\n$REPORTERROR"
   fi
 }
@@ -344,9 +344,9 @@ HTOPSKEL() {
 }
 
 # Modify Terminal theme in /etc/skel
-ALLTERTHEM() {
-  log_upgrade "ALLTERTHEM"
-  echo "#Updating system Terminal themes..."
+ALLTERTHEME() {
+  log_upgrade "ALLTERTHEME"
+  echo "#⚫ Updating system Terminal themes..."
   mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup 2>&1 | tee -a $LOGFILE
   touch /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
   echo "[general]" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
@@ -369,7 +369,7 @@ ALLTERTHEM() {
   mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup 2>&1 | tee -a $LOGFILE
   cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
   chown root:root /root/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "ALLTERTHEM - Error"
+  sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "ALLTERTHEME - Error"
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the system Terminal themes.\n\n$REPORTERROR"
   fi
 }
@@ -378,7 +378,7 @@ ALLTERTHEM() {
 BLURAYVLCSYS() {
   log_upgrade "BLURAYVLCSYS"
   UPDATER=$( stdbuf -oL /bin/bash \-c '(mkdir -p /etc/skel/.config/aacs && cd /etc/skel/.config/aacs/ && wget http://repo.linuxliteos.com/upgrade/3.0-3.6/KEYDB.cfg && sleep 2 )' 2>&1 | tee -a $LOGFILE |
-  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' | zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Adding additional Bluray support in VLC for the system...")
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' | zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding additional Bluray support for VLC in skel...")
 unset UPDATER
 }
 
@@ -387,24 +387,24 @@ unset UPDATER
 ARCTHEMETHUNDERB() {
   log_upgrade "ARCTHEMETHUNDERB"
   UPDATER=$( stdbuf -oL /bin/bash \-c '(wget -O /usr/local/sbin/mozilla-extension-manager http://repo.linuxliteos.com/upgrade/3.0-3.6/mozilla-extension-manager && chmod +x /usr/local/sbin/mozilla-extension-manager && mozilla-extension-manager --system --thunderbird --install http://repo.linuxliteos.com/upgrade/3.0-3.6/arcthunderbird.xpi && sleep 2 )' 2>&1 | tee -a $LOGFILE |
-  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Adding Arc theme to Thunderbird...")
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding Arc theme to Thunderbird globally...")
 unset UPDATER
 }
 
 # Get Conky for Linux Lite 3.0 add it to /etc/skel
-GETCONKY() {
-  log_upgrade "GETCONKY"
+ADDLITEWIDGSKEL() {
+  log_upgrade "ADDLITEWIDGSKEL"
   UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /etc/skel && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz &&  chown root:root .conky && sleep 2 )' 2>&1 | tee -a $LOGFILE |
-  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' | zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="$APPNAME" --text="Adding Lite Widget to /etc/skel...")
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' | zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding Lite Widget into skel...")
 unset UPDATER
 }
 
 # Improvements to the Lite Desktop Widget
-UPDCONKSKEL() {
-  log_upgrade "UPDCONKSKEL"
+UPDLITEWIDGSKEL() {
+  log_upgrade "UPDLITEWIDGSKEL"
   UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$USER"/g /etc/skel/.conky/widget && sleep 2 )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="$APPNAME" --text="Updating the Lite Desktop Widget in skel...")
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating the Lite Desktop Widget in skel...")
   if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 return
