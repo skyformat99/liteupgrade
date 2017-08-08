@@ -162,7 +162,6 @@ EXEBASHSCR() {
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "EXEBASHSCR - Error"
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while adding the Execute bash scripts feature.\n\n$REPORTERROR"
   fi
-#unset UPDATER
 }
 
 # Change Notification theme

@@ -38,37 +38,37 @@ esac
 case "$arch" in
     x86)
     ARRAYB+=('BUPETCSKEL30')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('ADDLITEWIDGSKEL')
+    ARRAYC+=('UPDLITEWIDGSKEL')
+    ARRAYC+=('NOTIFYTHMSKEL')
+    ARRAYC+=('HTOPSKEL')
+    ARRAYC+=('ALLTERTHEME')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
     ARRAYC+=('UPDPKGS')
     ARRAYC+=('ERASEDPKGS')
     ARRAYC+=('INPKCL')
-    ARRAYC+=('ADDWALLS')
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPDGRUB')
     ARRAYC+=('UPDPLYM')
-    ARRAYC+=('NOTIFYTHMSKEL')
-    ARRAYC+=('HTOPSKEL')
-    ARRAYC+=('ALLTERTHEME')
-    ARRAYC+=('BLURAYVLCSYS')
-    ARRAYC+=('ARCTHEMETHUNDERB')
-    ARRAYC+=('ADDLITEWIDGSKEL')
-    ARRAYC+=('UPDLITEWIDGSKEL')
     ;;
     amd64)
     ARRAYB+=('BUPETCSKEL3064')
-    ARRAYC+=('UPDPKGS')
-    ARRAYC+=('ERASEDPKGS')
-    ARRAYC+=('INPKCL64')
     ARRAYC+=('ADDWALLS')
-    ARRAYC+=('UPLSBISSUE')
-    ARRAYC+=('UPDGRUB')
-    ARRAYC+=('UPDPLYM')
+    ARRAYC+=('ADDLITEWIDGSKEL')
+    ARRAYC+=('UPDLITEWIDGSKEL')
     ARRAYC+=('NOTIFYTHMSKEL')
     ARRAYC+=('HTOPSKEL')
     ARRAYC+=('ALLTERTHEME')
     ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('ARCTHEMETHUNDERB')
-    ARRAYC+=('ADDLITEWIDGSKEL')
-    ARRAYC+=('UPDLITEWIDGSKEL')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
+    ARRAYC+=('INPKCL64')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
     ;;
 esac
 }
@@ -93,33 +93,33 @@ esac
 case "$arch" in
     x86)
     ARRAYB+=('BUPETCSKEL32')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('UPDLITEWIDGSKEL')
+    ARRAYC+=('NOTIFYTHMSKEL')
+    ARRAYC+=('ALLTERTHEME')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
     ARRAYC+=('UPDPKGS')
     ARRAYC+=('ERASEDPKGS')
     ARRAYC+=('INPKCL')
-    ARRAYC+=('ADDWALLS')
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPDGRUB')
     ARRAYC+=('UPDPLYM')
-    ARRAYC+=('NOTIFYTHMSKEL')
-    ARRAYC+=('ALLTERTHEME')
-    ARRAYC+=('BLURAYVLCSYS')
-    ARRAYC+=('ARCTHEMETHUNDERB')
-    ARRAYC+=('UPDLITEWIDGSKEL')
     ;;
     amd64)
     ARRAYB+=('BUPETCSKEL3264')
-    ARRAYC+=('UPDPKGS')
-    ARRAYC+=('ERASEDPKGS')
-    ARRAYC+=('INPKCL64')
     ARRAYC+=('ADDWALLS')
-    ARRAYC+=('UPLSBISSUE')
-    ARRAYC+=('UPDGRUB')
-    ARRAYC+=('UPDPLYM')
+    ARRAYC+=('UPDLITEWIDGSKEL')
     ARRAYC+=('NOTIFYTHMSKEL')
     ARRAYC+=('ALLTERTHEME')
     ARRAYC+=('BLURAYVLCSYS')
     ARRAYC+=('ARCTHEMETHUNDERB')
-    ARRAYC+=('UPDLITEWIDGSKEL')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
+    ARRAYC+=('INPKCL64')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
     ;;
 esac
 }
@@ -144,27 +144,27 @@ esac
 case "$arch" in
     x86)
     ARRAYB+=('BUPETCSKEL34')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
     ARRAYC+=('UPDPKGS')
     ARRAYC+=('ERASEDPKGS')
     ARRAYC+=('INPKCL')
-    ARRAYC+=('ADDWALLS')
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPDGRUB')
     ARRAYC+=('UPDPLYM')
-    ARRAYC+=('BLURAYVLCSYS')
-    ARRAYC+=('ARCTHEMETHUNDERB')
     ;;
     amd64)
     ARRAYB+=('BUPETCSKEL3464')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
     ARRAYC+=('UPDPKGS')
     ARRAYC+=('ERASEDPKGS')
     ARRAYC+=('INPKCL64')
-    ARRAYC+=('ADDWALLS')
     ARRAYC+=('UPLSBISSUE')
     ARRAYC+=('UPDGRUB')
     ARRAYC+=('UPDPLYM')
-    ARRAYC+=('BLURAYVLCSYS')
-    ARRAYC+=('ARCTHEMETHUNDERB')
     ;;
 esac
 }
@@ -220,6 +220,138 @@ BUPETCSKEL3464() {
   cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
 }
 
+# Add new wallpapers
+ADDWALLS() {
+  log_upgrade "ADDWALLS"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.6/walls36.tar.gz &&  tar -xvf walls36.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && chown root:root * && chmod 644 * && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Adding new wallpapers...")
+unset UPDATER
+}
+
+# Get Conky for Linux Lite 3.0 add it to /etc/skel
+ADDLITEWIDGSKEL() {
+  log_upgrade "ADDLITEWIDGSKEL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /etc/skel && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz &&  chown root:root .conky && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding Lite Widget into skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Improvements to the Lite Desktop Widget
+UPDLITEWIDGSKEL() {
+  log_upgrade "UPDLITEWIDGSKEL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$USER"/g /etc/skel/.conky/widget && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating the Lite Desktop Widget in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Change Notification theme
+NOTIFYTHMSKEL() {
+  log_upgrade "NOTIFYTHMSKEL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(mv /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup ;
+  touch /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "<?xml version="1.0" encoding="UTF-8"?>" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo " " >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "<channel name="xfce4-notifyd" version="1.0">" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "  <property name="notify-location" type="uint" value="2"/>" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "  <property name="theme" type="string" value="Default"/>" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "  <property name="expire-timeout" type="int" value="5"/>" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "</channel>" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Changing Notification theme in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Change to new HTOP theme, file is: /etc/skel/.config/htop/htoprc
+HTOPSKEL() {
+  log_upgrade "HTOPSKEL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(touch /etc/skel/.config/htop/htoprc ;
+  echo "fields=0 48 17 18 38 39 40 2 46 47 49 1" >> /etc/skel/.config/htop/htoprc ;
+  echo "sort_key=46" >> /etc/skel/.config/htop/htoprc ;
+  echo "sort_direction=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "hide_threads=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "hide_kernel_threads=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "hide_userland_threads=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "shadow_other_users=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "show_thread_names=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "show_program_path=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "highlight_base_name=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "highlight_megabytes=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "highlight_threads=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "tree_view=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "header_margin=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "detailed_cpu_time=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "cpu_count_from_zero=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "update_process_names=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "account_guest_in_cpu_meter=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "color_scheme=5" >> /etc/skel/.config/htop/htoprc ;
+  echo "delay=15" >> /etc/skel/.config/htop/htoprc ;
+  echo "left_meters=LeftCPUs2 Memory Swap" >> /etc/skel/.config/htop/htoprc ;
+  echo "left_meter_modes=1 1 1" >> /etc/skel/.config/htop/htoprc ;
+  echo "right_meters=RightCPUs2 Tasks LoadAverage Uptime" >> /etc/skel/.config/htop/htoprc ;
+  echo "right_meter_modes=1 2 2 2" >> /etc/skel/.config/htop/htoprc && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating to new Resource Usage theme in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Modify Terminal theme in /etc/skel
+ALLTERTHEME() {
+  log_upgrade "ALLTERTHEME"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup ;
+  touch /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "[general]" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "fontname=Monospace 10" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "selchars=-A-Za-z0-9,./?%&#:_" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "scrollback=100000" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "bgcolor=#1A1E1F" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "bgalpha=65535" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "fgcolor=#f0f0f0" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "disallowbold=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "cursorblinks=true" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "cursorunderline=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "audiblebell=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "tabpos=top" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "hidescrollbar=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "hidemenubar=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "hideclosebutton=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "disablef10=true" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "disablealt=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup ;
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/ ;
+  chown root:root /root/.config/lxterminal/lxterminal.conf && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating system Terminal theme in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Bluray additional support in VLC - SYSTEM
+BLURAYVLCSYS() {
+  log_upgrade "BLURAYVLCSYS"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(mkdir -p /etc/skel/.config/aacs && cd /etc/skel/.config/aacs/ && wget http://repo.linuxliteos.com/upgrade/3.0-3.6/KEYDB.cfg && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding additional Bluray support for VLC in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Add Arc theme to Thunderbird
+# Credit - Nicolas Bernaerts, https://github.com/NicolasBernaerts/ubuntu-scripts/tree/master/mozilla
+ARCTHEMETHUNDERB() {
+  log_upgrade "ARCTHEMETHUNDERB"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(wget -O /usr/local/sbin/mozilla-extension-manager http://repo.linuxliteos.com/upgrade/3.0-3.6/mozilla-extension-manager && chmod +x /usr/local/sbin/mozilla-extension-manager && mozilla-extension-manager --system --thunderbird --install http://repo.linuxliteos.com/upgrade/3.0-3.6/arcthunderbird.xpi && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding Arc theme to Thunderbird globally...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
 # Get list of available updated packages
 UPDPKGS() {
   log_upgrade "UPDPKGS"
@@ -256,14 +388,6 @@ INPKCL64() {
 unset UPDATER
 }
 
-# Add new wallpapers
-ADDWALLS() {
-  log_upgrade "ADDWALLS"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.6/walls36.tar.gz &&  tar -xvf walls36.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && chown root:root * && chmod 644 * && sleep 2 )' 2>&1 | tee -a $LOGFILE |
-  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Adding new wallpapers...")
-unset UPDATER
-}
-
 # Update lsb_release and issue files /etc changes, update /etc/llver
 UPLSBISSUE() {
   log_upgrade "UPLSBISSUE"
@@ -293,118 +417,6 @@ UPDPLYM() {
   sed -i "s/blue=0x988592/blue=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && update-initramfs -u && sleep 2 )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
   zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating boot configuration please wait...")
-  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
-unset UPDATER
-}
-
-# Change Notification theme
-NOTIFYTHMSKEL() {
-  log_upgrade "NOTIFYTHMSKEL"
-  echo "#⚫ Updating to new Notification theme..."
-  cp /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup 2>&1 | tee -a $LOGFILE
-  sed -i '5d' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml 2>&1 | tee -a $LOGFILE
-  sed -i '5i\ \ <property name="theme" type="string" value="Default"/>' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml 2>&1 | tee -a $LOGFILE
-  sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "NOTIFYTHMSKEL - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Notification theme.\n\n$REPORTERROR"
-  fi
-}
-
-# Change to new HTOP theme, file is: /etc/skel/.config/htop/htoprc
-HTOPSKEL() {
-  log_upgrade "HTOPSKEL"
-  echo "#⚫ Updating to new Resource Usage theme..."
-  touch /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "fields=0 48 17 18 38 39 40 2 46 47 49 1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "sort_key=46" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "sort_direction=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "hide_threads=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "hide_kernel_threads=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "hide_userland_threads=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "shadow_other_users=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "show_thread_names=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "show_program_path=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "highlight_base_name=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "highlight_megabytes=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "highlight_threads=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "tree_view=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "header_margin=1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "detailed_cpu_time=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "cpu_count_from_zero=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "update_process_names=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "account_guest_in_cpu_meter=0" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "color_scheme=5" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "delay=15" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "left_meters=LeftCPUs2 Memory Swap" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "left_meter_modes=1 1 1" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "right_meters=RightCPUs2 Tasks LoadAverage Uptime" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "right_meter_modes=1 2 2 2" >> /etc/skel/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "HTOPSKEL - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Resource Usage theme.\n\n$REPORTERROR"
-  fi
-}
-
-# Modify Terminal theme in /etc/skel
-ALLTERTHEME() {
-  log_upgrade "ALLTERTHEME"
-  echo "#⚫ Updating system Terminal themes..."
-  mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup 2>&1 | tee -a $LOGFILE
-  touch /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "[general]" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "fontname=Monospace 10" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "selchars=-A-Za-z0-9,./?%&#:_" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "scrollback=100000" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "bgcolor=#1A1E1F" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "bgalpha=65535" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "fgcolor=#f0f0f0" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "disallowbold=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "cursorblinks=true" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "cursorunderline=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "audiblebell=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "tabpos=top" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "hidescrollbar=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "hidemenubar=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "hideclosebutton=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "disablef10=true" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "disablealt=false" >> /etc/skel/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup 2>&1 | tee -a $LOGFILE
-  cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
-  chown root:root /root/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  sleep 2 && if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "ALLTERTHEME - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the system Terminal themes.\n\n$REPORTERROR"
-  fi
-}
-
-# Bluray additional support in VLC - SYSTEM
-BLURAYVLCSYS() {
-  log_upgrade "BLURAYVLCSYS"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(mkdir -p /etc/skel/.config/aacs && cd /etc/skel/.config/aacs/ && wget http://repo.linuxliteos.com/upgrade/3.0-3.6/KEYDB.cfg && sleep 2 )' 2>&1 | tee -a $LOGFILE |
-  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' | zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding additional Bluray support for VLC in skel...")
-unset UPDATER
-}
-
-# Add Arc theme to Thunderbird
-# Credit - Nicolas Bernaerts, https://github.com/NicolasBernaerts/ubuntu-scripts/tree/master/mozilla
-ARCTHEMETHUNDERB() {
-  log_upgrade "ARCTHEMETHUNDERB"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(wget -O /usr/local/sbin/mozilla-extension-manager http://repo.linuxliteos.com/upgrade/3.0-3.6/mozilla-extension-manager && chmod +x /usr/local/sbin/mozilla-extension-manager && mozilla-extension-manager --system --thunderbird --install http://repo.linuxliteos.com/upgrade/3.0-3.6/arcthunderbird.xpi && sleep 2 )' 2>&1 | tee -a $LOGFILE |
-  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding Arc theme to Thunderbird globally...")
-unset UPDATER
-}
-
-# Get Conky for Linux Lite 3.0 add it to /etc/skel
-ADDLITEWIDGSKEL() {
-  log_upgrade "ADDLITEWIDGSKEL"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /etc/skel && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz &&  chown root:root .conky && sleep 2 )' 2>&1 | tee -a $LOGFILE |
-  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' | zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding Lite Widget into skel...")
-unset UPDATER
-}
-
-# Improvements to the Lite Desktop Widget
-UPDLITEWIDGSKEL() {
-  log_upgrade "UPDLITEWIDGSKEL"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$USER"/g /etc/skel/.conky/widget && sleep 2 )' 2>&1 | tee -a $LOGFILE |
-  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating the Lite Desktop Widget in skel...")
   if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 return
