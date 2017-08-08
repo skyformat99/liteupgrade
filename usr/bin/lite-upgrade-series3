@@ -13,6 +13,10 @@ export LANG=C
 
 # Release Upgrade
 UPGR="3.6"
+UPGRFULL="Linux Lite 3.6"
+
+# Get current Linux Lite version
+GETLLVER=$(awk '{print}' /etc/llver)
 
 # Admin user variable
 MYUSER=$(sudo -u ${SUDO_USER:-$USER} whoami)
@@ -468,11 +472,12 @@ latest_version
 if [ $EUID -ne 0 ]; then
   zenity --question --icon-name="info" --width="430" --title="$APPNAME" \
          --window-icon="$IC" --cancel-label="Cancel" --ok-label="Upgrade" \
-         --text='\n               <span font="12">You are about to upgrade to Linux Lite 3.6</span>\n \
-Your computer must remain connected to the internet during this time.\n \
-A connectivity check to Linux Lite repositories will be conducted to make sure that the connection with the server can be established.\n \
-Once upgrades have taken place, you must restart the system to complete the upgrade process. Please save your work before continuing.\n\n \
-                     Click <b>Cancel</b> to exit now; <b>Upgrade</b> to proceed.\n'
+         --text="\nYou are currently running: <b>$GETLLVER</b>\n
+You are about to upgrade to: <b>$UPGRFULL</b>\n
+Your computer must remain connected to the internet during this time.\n
+A connectivity check to the Linux Lite repositories will be conducted to make sure that the connection with the server can be established.\n
+Once upgrades have taken place, you must restart the system to complete the upgrade process. Please save and close your work <b>now</b> before continuing.\n\n
+Click <b>Cancel</b> to exit now or <b>Upgrade</b> to proceed.\n"
 # If No is clicked then exit
 if [ "${PIPESTATUS[0]}" -ne "0" ]; then
 log_upgrade "user canceled - main dialog"

@@ -1,6 +1,6 @@
 #!/bin/bash
 #----------------------------------------------------------------
-# Description: Linux Lite Upgrade Script - Home
+# Description: Linux Lite Upgrade Script - System
 # About: For Linux Lite 3.- Series only
 # Licence: GPLv2 Sharing is Caring
 # Author: Jerry Bezencon, Ralphy
@@ -11,509 +11,460 @@
 # Ensure multi-language support
 export LANG=C
 
-# Release Upgrade
-UPGR="3.6"
-UPGRFULL="Linux Lite 3.6"
+# Kill off any package managers that may be running
+if [ "$(pidof synaptic)" ]; then killall -9 synaptic; else :; fi
+if [ -z "$(pgrep gdebi-gtk)" ]; then :; else killall -9 gdebi-gtk; fi
 
-# Get current Linux Lite version
-GETLLVER=$(awk '{print}' /etc/llver)
+# Keep it clean to reduce errors
+apt-get clean all 2>&1 | tee -a $LOGFILE
 
-# Admin user variable
-MYUSER=$(sudo -u ${SUDO_USER:-$USER} whoami)
+LL30SYSTEM() {
+# Invoke arrays
+ARRAYB=()
+ARRAYC=()
 
-# Linux Lite default dialog icon
-IC="/usr/share/icons/zenity-llcc.png"
+#Check the arch
+arch=$(uname -m)
 
-# Application title
-APPNAME="Linux Lite Upgrade Utility"
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
 
-# Log file variables
-LOGFILE=/tmp/lite-upgrade.log
-REPORTERROR="This error has been logged to $LOGFILE."
-# delete previous lite-upgrade.log file & create a new one
-if [ -f "$LOGFILE" ]; then chown $MYUSER:$MYUSER $LOGFILE; fi
-# log function
-log_upgrade(){
-    message="$@"
-    echo '['$(date +%D\ %H:%M:%S)'] '$message >>$LOGFILE
-}
-> $LOGFILE
-log_upgrade "---------- $APPNAME ----------"
-
-# Functions
-
-# Create backup directories for Linux Lite 3.0
-MKDIRBUPS30() {
-  log_upgrade "MKDIRBUPS30"
-  echo "#⚫ Creating backup directories..." && sleep 2
-  (mkdir -p /home/$MYUSER/.llupgradebackup/3.0 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
-    zenity --error --width="320" --title="$APPNAME - Error" --text="An error occurred while creating backup directories.\n\n$REPORTERROR\nUpgrade canceled."; exit 1
-  fi
-}
-
-# Backup /home/$USER/ selected config files on Linux Lite 3.0
-BUPHOMEUSER30() {
-  log_upgrade "BUPHOMEUSER30"
-  echo "#⚫ Backing up selected home files..." && sleep 2
-  chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE # ~/.config perms fix
-  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
-  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
-  (cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.0 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
-    zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
-  fi
-}
-
-# Create backup directories for Linux Lite 3.2
-MKDIRBUPS32() {
-  log_upgrade "MKDIRBUPS32"
-  echo "#⚫ Creating backup directories..." && sleep 2
-  (mkdir -p /home/$MYUSER/.llupgradebackup/3.2 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
-    zenity --error --width="320" --title="$APPNAME - Error" --text="An error occurred while creating backup directories.\n\n$REPORTERROR\nUpgrade canceled."; exit 1
-  fi
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYB+=('BUPETCSKEL30')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('ADDLITEWIDGSKEL')
+    ARRAYC+=('UPDLITEWIDGSKEL')
+    ARRAYC+=('NOTIFYTHMSKEL')
+    ARRAYC+=('HTOPSKEL')
+    ARRAYC+=('ALLTERTHEME')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
+    ARRAYC+=('INPKCL')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ;;
+    amd64)
+    ARRAYB+=('BUPETCSKEL3064')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('ADDLITEWIDGSKEL')
+    ARRAYC+=('UPDLITEWIDGSKEL')
+    ARRAYC+=('NOTIFYTHMSKEL')
+    ARRAYC+=('HTOPSKEL')
+    ARRAYC+=('ALLTERTHEME')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
+    ARRAYC+=('INPKCL64')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ;;
+esac
 }
 
-# Backup /home/$USER/ select config files on Linux Lite 3.2
-BUPHOMEUSER32() {
-  log_upgrade "BUPHOMEUSER32"
-  echo "#⚫ Backing up selected home files..." && sleep 2
-  chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE # ~/.config perms fix
-  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
-  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
-  chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup 2>&1 | tee -a $LOGFILE
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
-    zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
-  fi
+LL32SYSTEM() {
+# Invoke arrays
+ARRAYB=()
+ARRAYC=()
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYB+=('BUPETCSKEL32')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('UPDLITEWIDGSKEL')
+    ARRAYC+=('NOTIFYTHMSKEL')
+    ARRAYC+=('ALLTERTHEME')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
+    ARRAYC+=('INPKCL')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ;;
+    amd64)
+    ARRAYB+=('BUPETCSKEL3264')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('UPDLITEWIDGSKEL')
+    ARRAYC+=('NOTIFYTHMSKEL')
+    ARRAYC+=('ALLTERTHEME')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
+    ARRAYC+=('INPKCL64')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ;;
+esac
 }
 
-# Create backup directories for Linux Lite 3.4
-MKDIRBUPS34() {
-  log_upgrade "MKDIRBUPS34"
-  echo "#⚫ Creating backup directories..." && sleep 2
-  (mkdir -p /home/$MYUSER/.llupgradebackup/3.4 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
-    zenity --error --width="320" --title="$APPNAME - Error" --text="An error occurred while creating backup directories.\n\n$REPORTERROR\nUpgrade canceled."; exit 1
-  fi
+LL34SYSTEM() {
+# Invoke arrays
+ARRAYB=()
+ARRAYC=()
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYB+=('BUPETCSKEL34')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
+    ARRAYC+=('INPKCL')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ;;
+    amd64)
+    ARRAYB+=('BUPETCSKEL3464')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
+    ARRAYC+=('INPKCL64')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ;;
+esac
 }
 
-# Backup /home/$USER/ select config files on Linux Lite 3.4
-BUPHOMEUSER34() {
-  log_upgrade "BUPHOMEUSER34"
-  echo "#⚫ Backing up selected home files..." && sleep 2
-  chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE # ~/.config perms fix
-  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
-  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
-  chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup 2>&1 | tee -a $LOGFILE
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
-    zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
-  fi
+# Backup /etc/skel/ Linux Lite 3.0
+BUPETCSKEL30() {
+  log_upgrade "BUPETCSKEL30"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
 }
 
-# Add Lite Desktop Widget
-ADDLITEWIDG() {
-  log_upgrade "ADDLITEWIDG"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /home/"'$MYUSER'" && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+BUPETCSKEL3064() {
+  log_upgrade "BUPETCSKEL3064"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.0 2>&1 | tee -a $LOGFILE
+}
+
+# Backup /etc/skel/ Linux Lite 3.2
+BUPETCSKEL32() {
+  log_upgrade "BUPETCSKEL32"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+}
+
+BUPETCSKEL3264() {
+  log_upgrade "BUPETCSKEL3264"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
+}
+
+# Backup /etc/skel/ Linux Lite 3.4
+BUPETCSKEL34() {
+  log_upgrade "BUPETCSKEL34"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+}
+
+BUPETCSKEL3464() {
+  log_upgrade "BUPETCSKEL3464"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
+}
+
+# Add new wallpapers
+ADDWALLS() {
+  log_upgrade "ADDWALLS"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.6/walls36.tar.gz &&  tar -xvf walls36.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && chown root:root * && chmod 644 * && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Adding new wallpapers...")
+unset UPDATER
+}
+
+# Get Conky for Linux Lite 3.0 add it to /etc/skel
+ADDLITEWIDGSKEL() {
+  log_upgrade "ADDLITEWIDGSKEL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /etc/skel && wget http://repo.linuxliteos.com/upgrade/3.0-3.2/liteconkywidget.tar.gz && tar xvzf liteconkywidget.tar.gz && rm liteconkywidget.tar.gz &&  chown root:root .conky && sleep 2 )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-  zenity --progress --width=400 --percentage="$PERCENTAGE" --title="Adding Lite Desktop Widget..." --auto-close --no-cancel --text=" ")
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "ADDLITEWIDG - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --title="Error" --text="An error occurred while adding the Lite Desktop Widget.\n\n$REPORTERROR"
-  fi
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding Lite Widget into skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
 # Improvements to the Lite Desktop Widget
-UPDLITEWIDG() {
-  log_upgrade "UPDLITEWIDG"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$USER"/g /home/"'$MYUSER'"/.conky/widget && sleep 2 )' 2>&1 |
+UPDLITEWIDGSKEL() {
+  log_upgrade "UPDLITEWIDGSKEL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/Logged in as.*/${color}Logged in as:   \${alignr}\${color}\$USER"/g /etc/skel/.conky/widget && sleep 2 )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
-  zenity --progress --width=400 --percentage="$PERCENTAGE" --title="Updating the Lite Desktop Widget..." --auto-close --no-cancel --text=" ")
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "UPDLITEWIDG - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --title="Error" --text="An error occurred while updating the Lite Desktop Widget.\n\n$REPORTERROR"
-  fi
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating the Lite Desktop Widget in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
-}
-
-# Execute bash scripts   exec 1>$log_upgrade 2>&1
-EXEBASHSCR() {
-  log_upgrade "EXEBASHSCR"
-  BASHSEXECDEFAULT=".config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml"
-  # check defaults
-  sleep 2 |zenity --progress --width=400 --title="$APPNAME" --pulsate --auto-close --no-cancel --text="Adding Execute bash scripts feature..."
-  grep -q -F 'misc-exec-shell-scripts-by-default' /home/$MYUSER/$BASHSEXECDEFAULT && echo $?
-  if [ $? = 0 ]; then
-    sed -i 's/.*misc-exec-shell-scripts-by-default.*/  <property name="misc-exec-shell-scripts-by-default" type="bool" value="true"\/>/' /home/$MYUSER/$BASHSEXECDEFAULT
-  else # if defaults do not exist then set defaults
-    sed -i '/channel>/i \  <property name="misc-exec-shell-scripts-by-default" type="bool" value="true"/>' /home/$MYUSER/$BASHSEXECDEFAULT
-  fi
-  grep -q -F 'misc-exec-shell-scripts-by-default' /etc/skel/$BASHSEXECDEFAULT && echo $?
-  if [ $? = 0 ]; then
-    sed -i 's/.*misc-exec-shell-scripts-by-default.*/  <property name="misc-exec-shell-scripts-by-default" type="bool" value="true"\/>/' /etc/skel/$BASHSEXECDEFAULT
-  else # if defaults do not exist then set defaults
-    sed -i '/channel>/i \  <property name="misc-exec-shell-scripts-by-default" type="bool" value="true"/>' /etc/skel/$BASHSEXECDEFAULT
-  fi
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "EXEBASHSCR - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while adding the Execute bash scripts feature.\n\n$REPORTERROR"
-  fi
-  unset BASHSEXECDEFAULT
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "EXEBASHSCR - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while adding the Execute bash scripts feature.\n\n$REPORTERROR"
-  fi
 }
 
 # Change Notification theme
-NOTIFYTHM() {
-  log_upgrade "NOTIFYTHM"
-  echo "#⚫ Updating to new Notification theme..."
-  cp /home/$MYUSER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /home/$MYUSER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup 2>&1 | tee -a $LOGFILE
-  sed -i '5d' /home/$MYUSER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml 2>&1 | tee -a $LOGFILE
-  sed -i '5i\ \ <property name="theme" type="string" value="Default"/>' /home/$MYUSER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml 2>&1 | tee -a $LOGFILE
-  sleep 2 ; if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "NOTIFYTHM - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Notification theme.\n\n$REPORTERROR"
-  fi
-}
-
-# Window snapping & tiling
-WINSNAPTILE() {
-  log_upgrade "WINSNAPTILE"
-  XFWM4=".config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml"
-  ( sed -i 's/.*snap_resist.*/    <property name="snap_resist" type="bool" value="true"\/>/' /etc/skel/$XFWM4 2>&1 | tee -a $LOGFILE
-  sed -i 's/.*tile_on_move.*/    <property name="tile_on_move" type="bool" value="true"\/>/' /etc/skel/$XFWM4 2>&1 | tee -a $LOGFILE
-  sed -i 's/.*wrap_windows.*/    <property name="wrap_windows" type="bool" value="false"\/>/' /etc/skel/$XFWM4 2>&1 | tee -a $LOGFILE
-  sed -i 's/.*snap_resist.*/    <property name="snap_resist" type="bool" value="true"\/>/' /home/$MYUSER/$XFWM4 2>&1 | tee -a $LOGFILE
-  sed -i 's/.*tile_on_move.*/    <property name="tile_on_move" type="bool" value="true"\/>/' /home/$MYUSER/$XFWM4 2>&1 | tee -a $LOGFILE
-  sed -i 's/.*wrap_windows.*/    <property name="wrap_windows" type="bool" value="false"\/>/' /home/$MYUSER/$XFWM4 2>&1 | tee -a $LOGFILE && sleep 2 |
-  zenity --progress --width=400 --title="$APPNAME" --percentage=20  --auto-close --no-cancel --text="Setting Window snapping feature...")
-  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "WINSNAPTILE - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while setting the Window snapping feature.\n\n$REPORTERROR"
-  fi
-unset XFWM4
-}
-
-# Modify terminal theme, file is: /home/$MYUSER/.config/lxterminal/lxterminal.conf
-TERMTHEME() {
-  log_upgrade "TERMTHEME"
-  echo "#Updating to new Terminal theme..."
-  mv /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.config/lxterminal/lxterminal.conf.backup 2>&1 | tee -a $LOGFILE
-  touch /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "[general]" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "fontname=Monospace 10" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "selchars=-A-Za-z0-9,./?%&#:_" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "scrollback=100000" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "bgcolor=#1A1E1F" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "bgalpha=65535" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "fgcolor=#f0f0f0" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "disallowbold=false" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "cursorblinks=true" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "cursorunderline=false" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "audiblebell=false" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "tabpos=top" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "hidescrollbar=false" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "hidemenubar=false" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "hideclosebutton=false" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "disablef10=true" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  echo "disablealt=false" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
-  sleep 2 ; if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "TERMTHEME - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Terminal theme.\n\n$REPORTERROR"
-  fi
-}
-
-# Change to new HTOP/Resource Usage theme, file is: /home/$MYUSER/.config/htop/htoprc
-HTOPTHEME() {
-  log_upgrade "HTOPTHEME"
-  echo "#⚫ Updating to new Resource Usage theme..."
-  touch /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "fields=0 48 17 18 38 39 40 2 46 47 49 1" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "sort_key=46" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "sort_direction=1" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "hide_threads=0" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "hide_kernel_threads=1" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "hide_userland_threads=0" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "shadow_other_users=0" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "show_thread_names=0" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "show_program_path=1" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "highlight_base_name=0" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "highlight_megabytes=1" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "highlight_threads=1" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "tree_view=0" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "header_margin=1" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "detailed_cpu_time=0" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "cpu_count_from_zero=0" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "update_process_names=0" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "account_guest_in_cpu_meter=0" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "color_scheme=5" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "delay=15" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "left_meters=LeftCPUs2 Memory Swap" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "left_meter_modes=1 1 1" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "right_meters=RightCPUs2 Tasks LoadAverage Uptime" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  echo "right_meter_modes=1 2 2 2" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
-  sleep 2 ; if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "HTOPTHEME - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Resource Usage theme.\n\n$REPORTERROR"
-  fi
-}
-
-# Bluray additional support in VLC - USER
-BLURAYVLCUSER() {
-  log_upgrade "BLURAYVLCUSER"
-  echo "#⚫ Adding additional Bluray support in VLC for users..."
-   mkdir -p /home/$MYUSER/.config/aacs ; cd /home/$MYUSER/.config/aacs/ ; wget http://repo.linuxliteos.com/upgrade/3.0-3.6/KEYDB.cfg ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.config/aacs 2>&1 | tee -a $LOGFILE
-  sleep 2 ; if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "BLURAYVLCUSER - Error"
-    zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while adding additional Bluray support in VLC for users.\n\n$REPORTERROR"
-  fi
-}
-
-# Set lite-welcome to autostart on first boot
-LITEWELCOME() {
-  log_upgrade "LITEWELCOME"
-  echo "#⚫ Setting Lite Welcome to autostart..." && sleep 2
-  if [ ! -f /home/$MYUSER/.config/autostart/lite_welcome.desktop ]; then
-  UPDATER=$( ln -s /usr/share/applications/lite_welcome.desktop /home/$MYUSER/.config/autostart 2>&1 | tee -a $LOGFILE )
-  else :; fi
+NOTIFYTHMSKEL() {
+  log_upgrade "NOTIFYTHMSKEL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(mv /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup ;
+  touch /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "<?xml version="1.0" encoding="UTF-8"?>" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo " " >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "<channel name="xfce4-notifyd" version="1.0">" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "  <property name="notify-location" type="uint" value="2"/>" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "  <property name="theme" type="string" value="Default"/>" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "  <property name="expire-timeout" type="int" value="5"/>" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml ;
+  echo "</channel>" >> /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Changing Notification theme in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
 unset UPDATER
 }
 
-REBOOT() {
-  log_upgrade "Waiting for restart confirmation..." && log_upgrade "Moving upgrade log to user's home directory... All done."
-    mv -f "$LOGFILE" /home/$MYUSER/ ; chown $MYUSER:$MYUSER "$LOGFILE"
-while (true); do
-  # Set dialog icon variable
-  THEME=$(xfconf-query -c xsettings -p /Net/IconThemeName)
-  if [ -f "/home/$USER/.icons/${THEME}/apps/32/system-reboot.png" ]; then APPICON="/home/$USER/.icons/${THEME}"
-  elif [ -f "/usr/share/icons/${THEME}/apps/32/system-reboot.png" ]; then APPICON="/usr/share/icons/${THEME}"
-  else APPICON="/usr/share/icons/Faenza"
+# Change to new HTOP theme, file is: /etc/skel/.config/htop/htoprc
+HTOPSKEL() {
+  log_upgrade "HTOPSKEL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(touch /etc/skel/.config/htop/htoprc ;
+  echo "fields=0 48 17 18 38 39 40 2 46 47 49 1" >> /etc/skel/.config/htop/htoprc ;
+  echo "sort_key=46" >> /etc/skel/.config/htop/htoprc ;
+  echo "sort_direction=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "hide_threads=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "hide_kernel_threads=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "hide_userland_threads=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "shadow_other_users=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "show_thread_names=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "show_program_path=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "highlight_base_name=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "highlight_megabytes=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "highlight_threads=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "tree_view=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "header_margin=1" >> /etc/skel/.config/htop/htoprc ;
+  echo "detailed_cpu_time=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "cpu_count_from_zero=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "update_process_names=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "account_guest_in_cpu_meter=0" >> /etc/skel/.config/htop/htoprc ;
+  echo "color_scheme=5" >> /etc/skel/.config/htop/htoprc ;
+  echo "delay=15" >> /etc/skel/.config/htop/htoprc ;
+  echo "left_meters=LeftCPUs2 Memory Swap" >> /etc/skel/.config/htop/htoprc ;
+  echo "left_meter_modes=1 1 1" >> /etc/skel/.config/htop/htoprc ;
+  echo "right_meters=RightCPUs2 Tasks LoadAverage Uptime" >> /etc/skel/.config/htop/htoprc ;
+  echo "right_meter_modes=1 2 2 2" >> /etc/skel/.config/htop/htoprc && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating to new Resource Usage theme in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Modify Terminal theme in /etc/skel
+ALLTERTHEME() {
+  log_upgrade "ALLTERTHEME"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(mv /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.config/lxterminal/lxterminal.conf.backup ;
+  touch /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "[general]" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "fontname=Monospace 10" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "selchars=-A-Za-z0-9,./?%&#:_" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "scrollback=100000" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "bgcolor=#1A1E1F" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "bgalpha=65535" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "fgcolor=#f0f0f0" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "disallowbold=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "cursorblinks=true" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "cursorunderline=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "audiblebell=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "tabpos=top" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "hidescrollbar=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "hidemenubar=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "hideclosebutton=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "disablef10=true" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  echo "disablealt=false" >> /etc/skel/.config/lxterminal/lxterminal.conf ;
+  mv /root/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/lxterminal.conf.backup ;
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /root/.config/lxterminal/ ;
+  chown root:root /root/.config/lxterminal/lxterminal.conf && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating system Terminal theme in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Bluray additional support in VLC - SYSTEM
+BLURAYVLCSYS() {
+  log_upgrade "BLURAYVLCSYS"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(mkdir -p /etc/skel/.config/aacs && cd /etc/skel/.config/aacs/ && wget http://repo.linuxliteos.com/upgrade/3.0-3.6/KEYDB.cfg && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding additional Bluray support for VLC in skel...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Add Arc theme to Thunderbird
+# Credit - Nicolas Bernaerts, https://github.com/NicolasBernaerts/ubuntu-scripts/tree/master/mozilla
+ARCTHEMETHUNDERB() {
+  log_upgrade "ARCTHEMETHUNDERB"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(wget -O /usr/local/sbin/mozilla-extension-manager http://repo.linuxliteos.com/upgrade/3.0-3.6/mozilla-extension-manager && chmod +x /usr/local/sbin/mozilla-extension-manager && mozilla-extension-manager --system --thunderbird --install http://repo.linuxliteos.com/upgrade/3.0-3.6/arcthunderbird.xpi && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Adding Arc theme to Thunderbird globally...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Get list of available updated packages
+UPDPKGS() {
+  log_upgrade "UPDPKGS"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( apt-get update \-y )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating repositories..." --text="Updating repositories...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Erase existing available info
+ERASEDPKGS() {
+  log_upgrade "ERASEDPKGS"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( dpkg --clear-avail )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Clearing dpkg..." --text="Clearing dpkg...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Install new packages, remove obsolete packages, clean up - 32BIT
+INPKCL() {
+  log_upgrade "INPKCL"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify bcmwl-kernel-source xclip libaacs0 libbluray-bdj libbluray1 \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." --text="Downloading and Installing new packages...")
+unset UPDATER
+}
+
+# Install new packages, remove obsolete packages, clean up - 64BIT
+INPKCL64() {
+  log_upgrade "INPKCL64"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify bcmwl-kernel-source xclip libaacs0 libbluray-bdj libbluray1 \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." --text="Downloading and Installing new packages...")
+unset UPDATER
+}
+
+# Update lsb_release and issue files /etc changes, update /etc/llver
+UPLSBISSUE() {
+  log_upgrade "UPLSBISSUE"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/DISTRIB_DESCRIPTION=.*/DISTRIB_DESCRIPTION=\"Linux Lite "'$UPGR'"\"/g" /etc/lsb-release && echo "Linux Lite $UPGR LTS \n \l" | tee /etc/issue && echo "Linux Lite $UPGR" | tee /etc/llver && sleep 2 )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Updating version information...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Update grub
+UPDGRUB() {
+  log_upgrade "UPDGRUB"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( update-grub && sleep 2 )' 2>&1 | tee -a $LOGFILE | stdbuf -oL sed -n -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating Grub..." --text="Updating Grub...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+}
+
+# Update /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth
+UPDPLYM() {
+  log_upgrade "UPDPLYM"
+  UPDATER=$( stdbuf -oL /bin/bash \-c '( sed -i "s/^title=Linux Lite.*$/title=Linux Lite "'$UPGR'"/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/^title=Ubuntu.*$/title=Linux Lite "'$UPGR'"/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/black=0x2c001e/black=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/white=0xffffff/white=0xffffff/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/brown=0xff4012/brown=0xffff00/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/blue=0x988592/blue=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && update-initramfs -u && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE" --title="Updating boot configuration please wait...")
+  if [ $? = 1 ]; then zenity --info --title="$APPNAME" --text="\nError:\n${line}"; fi
+unset UPDATER
+return
+}
+
+#Check the version and start  the appropriate function
+LLVER=$(awk '{print $3}' /etc/llver)
+
+  if [ "$LLVER" == "3.0" ]; then LL30SYSTEM
+elif [ "$LLVER" == "3.2" ]; then LL32SYSTEM
+elif [ "$LLVER" == "3.4" ]; then LL34SYSTEM
+elif [ "$LLVER" == "3.6" ]; then LL36SYSTEM
+elif [ "$LLVER" == "3.8" ]; then zenity --info --text="You are already running the latest release."; exit 0
   fi
-  title="$APPNAME"
-  exit_type=$(zenity --width="340" --height="190" --window-icon="$IC" --cancel-label="Continue without restart" --title="$title" --text='                <span font="Sans Bold 10">Upgrade routine completed</span>\n' \
-                     --list --imagelist --print-column=2 --column="  " --column="Action" --column="Description" \
-  "$APPICON/apps/32/system-reboot.png" "Restart" "Reboot the computer now" \
-  "$APPICON/actions/32/system-shutdown.png" "Shutdown" "Shutdown the computer now")
-
-  if [ $? -eq "1" ]; then zenity --info --title="$APPNAME" --text="\nDon't forget to restart your computer to complete the upgrade."; exit; fi
-
-  # restart and shutdown options
-  if [ "$exit_type" = "Restart" ]; then
-    dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart
-  elif [ "$exit_type" = "Shutdown" ]; then
-      dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop
-  else zenity --info --timeout="2" --ok-label="Back" --title="$APPNAME" --text="\nPlease choose one of the available options."; continue
-  fi
-  done
-}
-
-LL30() {
-# Invoke arrays
-ARRAYA=()       # Array for LL 3.0
-
-# check the arch
-log_upgrade "Checking Architecture:"
-arch=$(uname -m) ; log_upgrade "$arch"
-
-case "$arch" in
-    x86)    arch="x86"  ;;
-    i?86)   arch="x86"  ;;
-    amd64)  arch="amd64"    ;;
-    x86_64) arch="amd64"    ;;
-    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
-esac
-
-# Populate arrays based on the arch
-case "$arch" in
-    x86)
-    ARRAYA+=('MKDIRBUPS30')
-    ARRAYA+=('BUPHOMEUSER30')
-    ARRAYA+=('ADDLITEWIDG')
-    ARRAYA+=('EXEBASHSCR')
-    ARRAYA+=('NOTIFYTHM')
-    ARRAYA+=('WINSNAPTILE')
-    ARRAYA+=('TERMTHEME')
-    ARRAYA+=('HTOPTHEME')
-    ARRAYA+=('BLURAYVLCUSER')
-    ARRAYA+=('LITEWELCOME')
-    ;;
-    amd64)
-    ARRAYA+=('MKDIRBUPS30')
-    ARRAYA+=('BUPHOMEUSER30')
-    ARRAYA+=('ADDLITEWIDG')
-    ARRAYA+=('EXEBASHSCR')
-    ARRAYA+=('NOTIFYTHM')
-    ARRAYA+=('WINSNAPTILE')
-    ARRAYA+=('TERMTHEME')
-    ARRAYA+=('HTOPTHEME')
-    ARRAYA+=('BLURAYVLCUSER')
-    ARRAYA+=('LITEWELCOME')
-    ;;
-esac
-}
-
-LL32() {
-# Invoke arrays
-ARRAYA=()       # Array for LL 3.2
-
-# check the arch
-log_upgrade "Checking Architecture:"
-arch=$(uname -m) ; log_upgrade "$arch"
-
-case "$arch" in
-    x86)    arch="x86"  ;;
-    i?86)   arch="x86"  ;;
-    amd64)  arch="amd64"    ;;
-    x86_64) arch="amd64"    ;;
-    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
-esac
-
-# Populate arrays based on the arch
-case "$arch" in
-    x86)
-    ARRAYA+=('MKDIRBUPS32')
-    ARRAYA+=('BUPHOMEUSER32')
-    ARRAYA+=('UPDLITEWIDG')
-    ARRAYA+=('EXEBASHSCR')
-    ARRAYA+=('NOTIFYTHM')
-    ARRAYA+=('WINSNAPTILE')
-    ARRAYA+=('TERMTHEME')
-    ARRAYA+=('BLURAYVLCUSER')
-    ARRAYA+=('LITEWELCOME')
-    ;;
-    amd64)
-    ARRAYA+=('MKDIRBUPS32')
-    ARRAYA+=('BUPHOMEUSER32')
-    ARRAYA+=('UPDLITEWIDG')
-    ARRAYA+=('EXEBASHSCR')
-    ARRAYA+=('NOTIFYTHM')
-    ARRAYA+=('WINSNAPTILE')
-    ARRAYA+=('TERMTHEME')
-    ARRAYA+=('BLURAYVLCUSER')
-    ARRAYA+=('LITEWELCOME')
-    ;;
-esac
-}
-
-LL34() {
-# Invoke arrays
-ARRAYA=()       # Array for LL 3.4
-
-# check the arch
-log_upgrade "Checking Architecture:"
-arch=$(uname -m) ; log_upgrade "$arch"
-
-case "$arch" in
-    x86)    arch="x86"  ;;
-    i?86)   arch="x86"  ;;
-    amd64)  arch="amd64"    ;;
-    x86_64) arch="amd64"    ;;
-    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
-esac
-
-# Populate arrays based on the arch
-case "$arch" in
-    x86)
-    ARRAYA+=('MKDIRBUPS34')
-    ARRAYA+=('BUPHOMEUSER34')
-    ARRAYA+=('BLURAYVLCUSER')
-    ARRAYA+=('LITEWELCOME')
-    ;;
-    amd64)
-    ARRAYA+=('MKDIRBUPS34')
-    ARRAYA+=('BUPHOMEUSER34')
-    ARRAYA+=('BLURAYVLCUSER')
-    ARRAYA+=('LITEWELCOME')
-    ;;
-esac
-}
-
-RUN() {
-  log_upgrade "Executing upgrades..."
-# Check if ARRAYA is empty - If it is empty skip the execution
-if [ ${#ARRAYA[@]} -ne 0 ]; then
+# Check if ARRAYB is empty
+# If it is skip the execution
+if [ ${#ARRAYB[@]} -ne 0 ]; then
     x=0
-    for k in "${!ARRAYA[@]}"; do  x=$(( $x + 1 )); done  # Get the total number of selected items in array A
+    for k in "${!ARRAYB[@]}"; do  x=$(( $x + 1 )); done  # Get the total number of selected items in array B
     TOTAL_LINES=$x
-    printf '%s \n' "${ARRAYA[@]}"|
+    i=0
+    printf '%s \n' "${ARRAYB[@]}"|
     while read  line; do
       $line     # Execute functions one by one
-      if [ $? = 1 ]; then log_upgrade "Error - $line"; zenity --error --title="$APPNAME" --text="\nAn error occurred while performing upgrades:\n ${line}"; exit 1 ; fi
-      let i++
-        (( PERCENTAGE = 100 \* ${i} / ${TOTAL_LINES} ))
+        if [ $? = 1 ]; then log_upgrade "Error - $line"; zenity --error --title="$APPNAME" --text="An error occurred while performing upgrades:\n ${line}"; exit 1 ; fi
+        let i++
+          (( PERCENTAGE = 100 \* ${i} / ${TOTAL_LINES} ))
         echo "$PERCENTAGE"
-        if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed." && sleep 2 ; fi
-      done| zenity --progress  --title="$APPNAME" --auto-kill --auto-close --no-cancel --width=400
+        if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed." && sleep 2; fi
+    done| zenity --progress  --title="$APPNAME" --auto-kill --auto-close --no-cancel --width=400
+fi
+# Check if ARRAYC is empty
+# If it is skip the execution
+if [ ${#ARRAYC[@]} -ne 0 ]; then
+    x=0
+    for k in "${!ARRAYC[@]}"; do  x=$(( $x + 1 )); done  # Get the total number of selected items in the array
+    i=0
+    TOTAL_LINES=$x
+    PERCENTAGE=0
+    printf '%s \n' "${ARRAYC[@]}"|
+    while read  line; do
+        (( PERCENTAGE = 100 \* ${i} / ${TOTAL_LINES} ))
+        $line     # Execute functions one by one
+        if [ $? = 1 ]; then log_upgrade "Error - $line"; zenity --error --title="$APPNAME" --text="An error occurred while performing upgrades:\n ${line}"; fi
+        let i++
+    if [ "$PERCENTAGE" == "100" ]; then echo "#⚫ Completed." && sleep 2 ; fi
+    done
 fi
 
-export -f log_upgrade; export MYUSER REPORTERROR UPGR APPNAME LOGFILE IC
-/usr/bin/lite-upgrade-system-series3     # Run the next script
-
-if grep "Linux Lite ${UPGR}" /etc/llver; then log_upgrade "Upgrade succeeded."; REBOOT; else log_upgrade "Upgrade failed - /etc/llver is not ${UPGR}"; zenity --info --title="$APPNAME" --text="Upgrade canceled."; fi
-}
-
-upgrade_exec() {
-# check LL current version and start the appropriate function
-log_upgrade "Upgrading version:"
-# check if version release exists in /etc/llver. If not, create it from /etc/issue file
-if [ "$(grep -c "Linux Lite" /etc/llver)" -ge 1 ]; then :; else grep "Linux Lite" /etc/issue | cut -c 1-14 > /etc/llver; fi
-# check LL version and start the appropriate function
-if grep "Linux Lite 3.0" /etc/llver; then log_upgrade "Linux Lite 3.0"; LL30
-elif grep "Linux Lite 3.2" /etc/llver; then log_upgrade "Linux Lite 3.2"; LL32
-elif grep "Linux Lite 3.4" /etc/llver; then log_upgrade "Linux Lite 3.4"; LL34
-else latest_version
-fi
-}
-
-# We start here
-latest_version() { if grep "Linux Lite 3.6" /etc/llver; then log_upgrade "Linux Lite $UPGR"; zenity --info --text="\nYou are already running the latest release."; exit 0 ; else :; fi }
-latest_version
-# First dialog box - we must ask for elevation from the start otherwise a regular user can run lite-upgrade-series3 unnecessarily
-if [ $EUID -ne 0 ]; then
-  zenity --question --icon-name="info" --width="430" --title="$APPNAME" \
-         --window-icon="$IC" --cancel-label="Cancel" --ok-label="Upgrade" \
-         --text="\nYou are currently running: <b>$GETLLVER</b>\n
-You are about to upgrade to: <b>$UPGRFULL</b>\n
-Your computer must remain connected to the internet during this time.\n
-A connectivity check to the Linux Lite repositories will be conducted to make sure that the connection with the server can be established.\n
-Once upgrades have taken place, you must restart the system to complete the upgrade process. Please save and close your work <b>now</b> before continuing.\n\n
-Click <b>Cancel</b> to exit now or <b>Upgrade</b> to proceed.\n"
-# If No is clicked then exit
-if [ "${PIPESTATUS[0]}" -ne "0" ]; then
-log_upgrade "user canceled - main dialog"
-exit 0
-fi
-
-case $? in
-    0) log_upgrade "Checking Internet access..."
-    if eval "curl -sk google.com" >> /dev/null 2>&1; then
-      :; log_upgrade "Internet connection check passed!"
-    else # Prompt ERROR internet connection check failed and exit
-        zenity --info --width=320 --height=120 --ok-label="Close" --title="$APPNAME - Aborted" \
-                --text="\n<b>Your computer is not connected to the internet</b> \n\n$APPNAME cannot continue. \nPlease check your Internet connection and try again."
-            log_upgrade "the computer is not connected to the internet - $APPNAME aborted."
-            exit 0
-    fi
-    log_upgrade "Checking connectivity to Master Repository..."
-    wget -qnv -t2 -T1 --ignore-length --no-proxy --max-redirect=1  --spider http://repo.linuxliteos.com/linuxlite/db/version
-        if [ ${?} -ne 0 ]; then
-          log_upgrade "Cannot connect to Linux Lite Master Repository - aborted"
-          zenity --error --title="$APPNAME - Aborted" --width="320" --ok-label="Close" \
-          --text="\nLinux Lite Upgrade Utility was unable to establish connection with the Linux Lite master repository.\n
-Please check your internet connection and try again.\n\nUpgrade has been canceled."
-          exit 0
-        else
-          log_upgrade "Linux Lite Master is ONLINE - passed."; :
-        fi
-        gksu -m '
-    <b>   Lite Upgrade requires Administrative privileges</b>
-
-     Please enter your password to continue.'  $0; exit 0 ; if [ "${PIPESTATUS[@]}" -eq "255" ]; then log_upgrade "Authentication canceled - aborted"; exit 0 ; fi ;;
-    1) :;;
-    esac
-fi
-
-upgrade_exec
-RUN
-
-exit 0
+unset ARRAYB
+unset ARRAYC
+unset MYUSER
