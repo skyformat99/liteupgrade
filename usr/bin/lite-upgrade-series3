@@ -56,10 +56,10 @@ MKDIRBUPS30() {
 BUPHOMEUSER30() {
   log_upgrade "BUPHOMEUSER30"
   echo "#⚫ Backing up selected home files..." && sleep 2
-  chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE # ~/.config perms fix
-  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
-  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
-  (cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.0 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
+  (chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE; # ~/.config perms fix
+  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE;
+  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE;
+  cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.0 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
     zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
   fi
@@ -79,13 +79,10 @@ MKDIRBUPS32() {
 BUPHOMEUSER32() {
   log_upgrade "BUPHOMEUSER32"
   echo "#⚫ Backing up selected home files..." && sleep 2
-  chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE # ~/.config perms fix
-  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
-  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.2 2>&1 | tee -a $LOGFILE
-  chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup 2>&1 | tee -a $LOGFILE
+  (chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE; # ~/.config perms fix
+  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE;
+  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE;
+  cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.2 ; cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.2 ; cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.2 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
     zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
   fi
@@ -105,13 +102,10 @@ MKDIRBUPS34() {
 BUPHOMEUSER34() {
   log_upgrade "BUPHOMEUSER34"
   echo "#⚫ Backing up selected home files..." && sleep 2
-  chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE # ~/.config perms fix
-  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE
-  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
-  cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
-  chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup 2>&1 | tee -a $LOGFILE
+  (chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE; # ~/.config perms fix
+  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE;
+  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE;
+  cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.4 ; cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.4 ; cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.4 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
     zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
   fi
