@@ -167,6 +167,7 @@ NOTIFYTHM() {
   log_upgrade "NOTIFYTHM"
   echo "#⚫ Updating to new Notification theme..."
   cp /home/$MYUSER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml /home/$MYUSER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup 2>&1 | tee -a $LOGFILE
+  chown -R $MYUSER:$MYUSER /home/$MYUSER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml.backup 2>&1 | tee -a $LOGFILE
   sed -i '5d' /home/$MYUSER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml 2>&1 | tee -a $LOGFILE
   sed -i '5i\ \ <property name="theme" type="string" value="Default"/>' /home/$MYUSER/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-notifyd.xml 2>&1 | tee -a $LOGFILE
   sleep 2 ; if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2 ; log_upgrade "NOTIFYTHM - Error"
@@ -214,6 +215,7 @@ TERMTHEME() {
   echo "hideclosebutton=false" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
   echo "disablef10=true" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
   echo "disablealt=false" >> /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
+  chown -R $MYUSER:$MYUSER /home/$MYUSER/.config/lxterminal/lxterminal.conf 2>&1 | tee -a $LOGFILE
   sleep 2 ; if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "TERMTHEME - Error"
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Terminal theme.\n\n$REPORTERROR"
   fi
@@ -248,6 +250,7 @@ HTOPTHEME() {
   echo "left_meter_modes=1 1 1" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
   echo "right_meters=RightCPUs2 Tasks LoadAverage Uptime" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
   echo "right_meter_modes=1 2 2 2" >> /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
+  chown -R $MYUSER:$MYUSER /home/$MYUSER/.config/htop/htoprc 2>&1 | tee -a $LOGFILE
   sleep 2 ; if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2; log_upgrade "HTOPTHEME - Error"
     zenity --error --width="340" --title="$APPNAME - Error" --text="An error occurred while changing the Resource Usage theme.\n\n$REPORTERROR"
   fi
