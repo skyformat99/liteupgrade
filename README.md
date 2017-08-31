@@ -3,7 +3,7 @@ Lite Upgrade
 
 Software to upgrade Linux Lite from within a Series.
 
-![](http://i.imgur.com/MnGu8Go.png)
+![](http://imgur.com/X68GFNY.png)
 
 ## License ![License](https://img.shields.io/badge/license-GPLv2-green.svg)
 
