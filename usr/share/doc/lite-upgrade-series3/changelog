@@ -1,3 +1,9 @@
+lite-upgrade-series3 (2.0-0110-linuxlite) citrine; urgency=medium
+
+  * Remove no proxy setting
+
+ -- Jerry Bezencon <valtam@linuxliteos.com>  Tue, 05 Sep 2017 17:55:03 +1200
+
 lite-upgrade-series3 (2.0-0100-linuxlite) citrine; urgency=medium
 
   * More descriptive titles, clean up, rearrangement & fixes
