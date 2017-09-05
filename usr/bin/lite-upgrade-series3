@@ -492,7 +492,7 @@ case $? in
             exit 0
     fi
     log_upgrade "Checking connectivity to Master Repository..."
-    wget -qnv -t2 -T1 --ignore-length --no-proxy --max-redirect=1  --spider http://repo.linuxliteos.com/linuxlite/db/version
+    wget -qnv -t2 -T8 --ignore-length --max-redirect=1  --spider http://repo.linuxliteos.com/linuxlite/db/version
         if [ ${?} -ne 0 ]; then
           log_upgrade "Cannot connect to Linux Lite Master Repository - aborted"
           zenity --error --title="$APPNAME - Aborted" --width="320" --ok-label="Close" \
