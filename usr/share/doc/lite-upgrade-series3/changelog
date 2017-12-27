@@ -1,3 +1,9 @@
+lite-upgrade-series3 (2.0-0120-linuxlite) citrine; urgency=medium
+
+  * New code for 3.8 Upgrade
+
+ -- Jerry Bezencon <valtam@linuxliteos.com>  Wed, 27 Dec 2017 22:07:14 +1200
+
 lite-upgrade-series3 (2.0-0110-linuxlite) citrine; urgency=medium
 
   * Remove no proxy setting
