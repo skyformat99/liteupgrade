@@ -169,6 +169,51 @@ case "$arch" in
 esac
 }
 
+LL36SYSTEM() {
+# Invoke arrays
+ARRAYB=()
+ARRAYC=()
+
+#Check the arch
+arch=$(uname -m)
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYB+=('BUPETCSKEL36')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
+    ARRAYC+=('INPKCL')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ;;
+    amd64)
+    ARRAYB+=('BUPETCSKEL3664')
+    ARRAYC+=('ADDWALLS')
+    ARRAYC+=('BLURAYVLCSYS')
+    ARRAYC+=('ARCTHEMETHUNDERB')
+    ARRAYC+=('UPDPKGS')
+    ARRAYC+=('ERASEDPKGS')
+    ARRAYC+=('INPKCL64')
+    ARRAYC+=('UPLSBISSUE')
+    ARRAYC+=('UPDGRUB')
+    ARRAYC+=('UPDPLYM')
+    ;;
+esac
+}
+
 # Backup /etc/skel/ Linux Lite 3.0
 BUPETCSKEL30() {
   log_upgrade "BUPETCSKEL30"
@@ -219,10 +264,27 @@ BUPETCSKEL3464() {
   cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.4 2>&1 | tee -a $LOGFILE
 }
 
+# Backup /etc/skel/ Linux Lite 3.6
+BUPETCSKEL36() {
+  log_upgrade "BUPETCSKEL36"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.6 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.6 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.6 2>&1 | tee -a $LOGFILE
+}
+
+BUPETCSKEL3664() {
+  log_upgrade "BUPETCSKEL3464"
+  echo "#⚫ Backing up /etc/skel files..." && sleep 2
+  mkdir -p /etc/skel/.llupgradebackup/3.6 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/htop/htoprc /etc/skel/.llupgradebackup/3.6 2>&1 | tee -a $LOGFILE
+  cp /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.llupgradebackup/3.6 2>&1 | tee -a $LOGFILE
+}
+
 # Add new wallpapers
 ADDWALLS() {
   log_upgrade "ADDWALLS"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.6/walls36.tar.gz &&  tar -xvf walls36.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && chown root:root * && chmod 644 * && sleep 2 )' 2>&1 | tee -a $LOGFILE |
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(cd /tmp && wget http://repo.linuxliteos.com/upgrade/3.0-3.8/walls38.tar.gz &&  tar -xvf walls38.tar.gz -C /usr/share/backgrounds/xfce/ && cd /usr/share/backgrounds/xfce/ && chown root:root * && chmod 644 * && sleep 2 )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Adding new wallpapers...")
 unset UPDATER
 }
@@ -372,7 +434,7 @@ unset UPDATER
 # Install new packages, remove obsolete packages, clean up - 32BIT
 INPKCL() {
   log_upgrade "INPKCL"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify xclip libaacs0 libbluray-bdj libbluray1 lite-sources \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get remove --purge unattended-upgrades \-y && rm -rf /var/log/unattended-upgrades && systemctl disable apt-daily.service && systemctl disable apt-daily.timer && systemctl disable apt-daily-upgrade.timer && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify xclip libaacs0 libbluray-bdj libbluray1 lite-sources regionset mythes-en-us gnome-font-viewer \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get remove --purge unattended-upgrades \-y && rm -rf /var/log/unattended-upgrades && systemctl disable apt-daily.service && systemctl disable apt-daily.timer && systemctl disable apt-daily-upgrade.timer && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
   zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." --text="Downloading and Installing new packages...")
 unset UPDATER
@@ -381,7 +443,7 @@ unset UPDATER
 # Install new packages, remove obsolete packages, clean up - 64BIT
 INPKCL64() {
   log_upgrade "INPKCL64"
-  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify xclip libaacs0 libbluray-bdj libbluray1 lite-sources \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get remove --purge unattended-upgrades \-y && rm -rf /var/log/unattended-upgrades && systemctl disable apt-daily.service && systemctl disable apt-daily.timer && systemctl disable apt-daily-upgrade.timer && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
+  UPDATER=$( stdbuf -oL /bin/bash \-c '(DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \-y && apt-get install libreoffice-gnome linux-generic conky-all xserver-xorg-input-joystick joystick yad lite-updatesnotify xclip libaacs0 libbluray-bdj libbluray1 lite-sources regionset mythes-en-us gnome-font-viewer \-y && echo flashplugin-installer flashplugin-installer/local string | debconf-set-selections && apt-get install flashplugin-installer \-y && apt-get update \-y && apt-get remove adobe-flashplugin \-y && apt-get remove --purge unattended-upgrades \-y && rm -rf /var/log/unattended-upgrades && systemctl disable apt-daily.service && systemctl disable apt-daily.timer && systemctl disable apt-daily-upgrade.timer && apt-get autoremove \-y && apt-get clean )' 2>&1 | tee -a $LOGFILE |
   stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
   zenity --progress --width=600 --auto-close --no-cancel --percentage="$PERCENTAGE"  --title="Downloading and Installing new packages..." --text="Downloading and Installing new packages...")
 unset UPDATER

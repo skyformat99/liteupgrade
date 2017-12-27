@@ -12,8 +12,8 @@
 export LANG=C
 
 # Release Upgrade
-UPGR="3.6"
-UPGRFULL="Linux Lite 3.6"
+UPGR="3.8"
+UPGRFULL="Linux Lite 3.8"
 
 # Get current Linux Lite version
 GETLLVER=$(awk '{print}' /etc/llver)
@@ -106,6 +106,29 @@ BUPHOMEUSER34() {
   chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE;
   chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE;
   cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.4 ; cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.4 ; cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.4 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
+  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
+    zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
+  fi
+}
+
+# Create backup directories for Linux Lite 3.6
+MKDIRBUPS36() {
+  log_upgrade "MKDIRBUPS36"
+  echo "#⚫ Creating backup directories..." && sleep 2
+  (mkdir -p /home/$MYUSER/.llupgradebackup/3.6 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
+  if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
+    zenity --error --width="320" --title="$APPNAME - Error" --text="An error occurred while creating backup directories.\n\n$REPORTERROR\nUpgrade canceled."; exit 1
+  fi
+}
+
+# Backup /home/$USER/ select config files on Linux Lite 3.6
+BUPHOMEUSER36() {
+  log_upgrade "BUPHOMEUSER36"
+  echo "#⚫ Backing up selected home files..." && sleep 2
+  (chmod 755 -R /home/$MYUSER/.config/ 2>&1 | tee -a $LOGFILE; # ~/.config perms fix
+  chmod 755 /home/$MYUSER/.config/htop/ 2>&1 | tee -a $LOGFILE;
+  chmod 755 /home/$MYUSER/.config/lxterminal/ 2>&1 | tee -a $LOGFILE;
+  cp /home/$MYUSER/.config/htop/htoprc /home/$MYUSER/.llupgradebackup/3.6 ; cp /home/$MYUSER/.config/lxterminal/lxterminal.conf /home/$MYUSER/.llupgradebackup/3.6 ; cp /home/$MYUSER/.conky/widget /home/$MYUSER/.llupgradebackup/3.6 ; chown -R $MYUSER:$MYUSER /home/$MYUSER/.llupgradebackup) 2>&1 | tee -a $LOGFILE
   if [ "${PIPESTATUS[0]}" -ne "0" ]; then echo "#✘ Error..." && sleep 2;
     zenity --error --width="320" --ok-label="Continue" --title="$APPNAME - Error" --text="An error occurred while backing up selected files in the home directory.\n\n$REPORTERROR"
   fi
@@ -425,6 +448,39 @@ case "$arch" in
 esac
 }
 
+LL36() {
+# Invoke arrays
+ARRAYA=()       # Array for LL 3.6
+
+# check the arch
+log_upgrade "Checking Architecture:"
+arch=$(uname -m) ; log_upgrade "$arch"
+
+case "$arch" in
+    x86)    arch="x86"  ;;
+    i?86)   arch="x86"  ;;
+    amd64)  arch="amd64"    ;;
+    x86_64) arch="amd64"    ;;
+    * ) echo "Your Arch '$arch' -> Its not supported."  ;;
+esac
+
+# Populate arrays based on the arch
+case "$arch" in
+    x86)
+    ARRAYA+=('MKDIRBUPS36')
+    ARRAYA+=('BUPHOMEUSER36')
+    ARRAYA+=('BLURAYVLCUSER')
+    ARRAYA+=('LITEWELCOME')
+    ;;
+    amd64)
+    ARRAYA+=('MKDIRBUPS36')
+    ARRAYA+=('BUPHOMEUSER36')
+    ARRAYA+=('BLURAYVLCUSER')
+    ARRAYA+=('LITEWELCOME')
+    ;;
+esac
+}
+
 RUN() {
   log_upgrade "Executing upgrades..."
 # Check if ARRAYA is empty - If it is empty skip the execution
@@ -458,12 +514,13 @@ if [ "$(grep -c "Linux Lite" /etc/llver)" -ge 1 ]; then :; else grep "Linux Lite
 if grep "Linux Lite 3.0" /etc/llver; then log_upgrade "Linux Lite 3.0"; LL30
 elif grep "Linux Lite 3.2" /etc/llver; then log_upgrade "Linux Lite 3.2"; LL32
 elif grep "Linux Lite 3.4" /etc/llver; then log_upgrade "Linux Lite 3.4"; LL34
+elif grep "Linux Lite 3.6" /etc/llver; then log_upgrade "Linux Lite 3.6"; LL36
 else latest_version
 fi
 }
 
 # We start here
-latest_version() { if grep "Linux Lite 3.6" /etc/llver; then log_upgrade "Linux Lite $UPGR"; zenity --info --text="\nYou are already running the latest release."; exit 0 ; else :; fi }
+latest_version() { if grep "Linux Lite 3.8" /etc/llver; then log_upgrade "Linux Lite $UPGR"; zenity --info --text="\nYou are already running the latest release."; exit 0 ; else :; fi }
 latest_version
 # First dialog box - we must ask for elevation from the start otherwise a regular user can run lite-upgrade-series3 unnecessarily
 if [ $EUID -ne 0 ]; then
