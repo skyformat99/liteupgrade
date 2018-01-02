@@ -469,13 +469,11 @@ case "$arch" in
     x86)
     ARRAYA+=('MKDIRBUPS36')
     ARRAYA+=('BUPHOMEUSER36')
-    ARRAYA+=('BLURAYVLCUSER')
     ARRAYA+=('LITEWELCOME')
     ;;
     amd64)
     ARRAYA+=('MKDIRBUPS36')
     ARRAYA+=('BUPHOMEUSER36')
-    ARRAYA+=('BLURAYVLCUSER')
     ARRAYA+=('LITEWELCOME')
     ;;
 esac
